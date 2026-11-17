@@ -1074,7 +1074,7 @@
 
         /**
          * ============================================================================
-         * 8. CAJITA 5: AGRADECIMIENTOS DEL GRUPO 1 (MODO EDICIÓN PROTEGIDO PARA DEREK)
+         * 8. CAJITA 5: AGRADECIMIENTOS DEL GRUPO 1
          * ============================================================================
          */
         const DEFAULT_AGRADECIMIENTOS = `Como integrantes del Grupo 1 (Gabriel Leon, Guillermo Hernandez, Lucía Herrera, Derek Reyes y Ezequiel Berterame), queremos expresar nuestro más sincero agradecimiento al docente de la materia "Desarrollo de Sistemas de IA" del IFTS N° 33 por su guía constante, exigencia académica y acompañamiento durante todo el cuatrimestre.
@@ -1083,128 +1083,21 @@ A lo largo de este Trabajo Práctico Final logramos integrar de manera tangible 
 
 Nos llevamos no solo herramientas técnicas de vanguardia, sino una metodología de trabajo colaborativo y pensamiento crítico para resolver problemáticas reales con impacto social.`;
 
-        const STORAGE_KEY_AGRADECIMIENTOS = 'ifts33_grupo1_agradecimientos_v1';
-        let isDerekUnlocked = false;
-
         function initAgradecimientosSection() {
             const displayEl = document.getElementById('agradecimientosDisplay');
-            const editorEl = document.getElementById('agradecimientosEditor');
-            const btnToggleEdit = document.getElementById('btnToggleDerekEdit');
-            const btnSave = document.getElementById('btnSaveDerekText');
-            const btnReset = document.getElementById('btnResetDerekText');
-            const pinPanel = document.getElementById('derekPinPanel');
-            const pinInput = document.getElementById('derekPinInput');
-            const btnConfirmPin = document.getElementById('btnConfirmPin');
-            const btnCancelPin = document.getElementById('btnCancelPin');
-            const lockIcon = document.getElementById('derekLockIcon');
-            const btnLabel = document.getElementById('derekBtnLabel');
-            const toastEl = document.getElementById('derekToast');
+            if (!displayEl) return;
 
-            function showToast(msg, type = 'success') {
-                toastEl.classList.remove('hidden', 'bg-emerald-500/15', 'text-emerald-300', 'border-emerald-500/30', 'bg-rose-500/15', 'text-rose-300', 'border-rose-500/30');
-                if (type === 'success') {
-                    toastEl.className = "rounded-xl px-4 py-2.5 text-xs font-medium flex items-center gap-2 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
-                } else {
-                    toastEl.className = "rounded-xl px-4 py-2.5 text-xs font-medium flex items-center gap-2 bg-rose-500/15 text-rose-300 border border-rose-500/30";
-                }
-                toastEl.textContent = msg;
-                setTimeout(() => {
-                    toastEl.classList.add('hidden');
-                }, 4000);
-            }
-
-            function renderFormattedText(rawText) {
-                const paragraphs = rawText.split('\n').filter(p => p.trim().length > 0);
-                displayEl.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
-            }
-
-            function escapeHtml(text) {
+            const escapeHtml = (text) => {
                 const div = document.createElement('div');
                 div.textContent = text;
                 return div.innerHTML;
-            }
+            };
 
-            // Cargar texto desde localStorage o usar el predeterminado
-            const savedText = localStorage.getItem(STORAGE_KEY_AGRADECIMIENTOS) || DEFAULT_AGRADECIMIENTOS;
-            renderFormattedText(savedText);
-            editorEl.value = savedText;
-
-            function setEditMode(enabled) {
-                isDerekUnlocked = enabled;
-                if (enabled) {
-                    pinPanel.classList.add('hidden');
-                    displayEl.classList.add('hidden');
-                    editorEl.classList.remove('hidden');
-                    btnSave.classList.remove('hidden');
-                    btnReset.classList.remove('hidden');
-                    lockIcon.setAttribute('data-lucide', 'unlock');
-                    lockIcon.classList.remove('text-amber-400');
-                    lockIcon.classList.add('text-emerald-400');
-                    btnLabel.textContent = 'Salir de Edición (Derek)';
-                    editorEl.focus();
-                } else {
-                    displayEl.classList.remove('hidden');
-                    editorEl.classList.add('hidden');
-                    btnSave.classList.add('hidden');
-                    btnReset.classList.add('hidden');
-                    lockIcon.setAttribute('data-lucide', 'lock');
-                    lockIcon.classList.remove('text-emerald-400');
-                    lockIcon.classList.add('text-amber-400');
-                    btnLabel.textContent = 'Modo Edición (Solo Derek)';
-                }
-                lucide.createIcons();
-            }
-
-            btnToggleEdit.addEventListener('click', () => {
-                if (isDerekUnlocked) {
-                    setEditMode(false);
-                } else {
-                    pinPanel.classList.toggle('hidden');
-                    if (!pinPanel.classList.contains('hidden')) {
-                        pinInput.value = '';
-                        pinInput.focus();
-                    }
-                }
-            });
-
-            function verifyDerekPin() {
-                const val = pinInput.value.trim().toLowerCase();
-                if (val === '1928' || val === 'derek') {
-                    setEditMode(true);
-                    showToast('¡Bienvenido Derek! Modo de edición habilitado.', 'success');
-                } else {
-                    showToast('PIN incorrecto. Acceso exclusivo para Derek Reyes (pista: 1928).', 'error');
-                    pinInput.value = '';
-                    pinInput.focus();
-                }
-            }
-
-            btnConfirmPin.addEventListener('click', verifyDerekPin);
-            pinInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') verifyDerekPin();
-            });
-            btnCancelPin.addEventListener('click', () => {
-                pinPanel.classList.add('hidden');
-            });
-
-            btnSave.addEventListener('click', () => {
-                const updatedText = editorEl.value.trim();
-                if (!updatedText) {
-                    showToast('El texto de agradecimiento no puede quedar vacío.', 'error');
-                    return;
-                }
-                localStorage.setItem(STORAGE_KEY_AGRADECIMIENTOS, updatedText);
-                renderFormattedText(updatedText);
-                setEditMode(false);
-                showToast('Agradecimientos guardados correctamente en almacenamiento local.', 'success');
-            });
-
-            btnReset.addEventListener('click', () => {
-                localStorage.removeItem(STORAGE_KEY_AGRADECIMIENTOS);
-                editorEl.value = DEFAULT_AGRADECIMIENTOS;
-                renderFormattedText(DEFAULT_AGRADECIMIENTOS);
-                showToast('Se restauró el mensaje institucional original del Grupo 1.', 'success');
-            });
+            displayEl.innerHTML = DEFAULT_AGRADECIMIENTOS
+                .split('\n')
+                .filter(p => p.trim().length > 0)
+                .map(p => `<p>${escapeHtml(p)}</p>`)
+                .join('');
         }
 
         /**

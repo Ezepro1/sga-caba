@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es" class="dark" data-theme="original">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,6 +23,8 @@
     <script src="js/tailwind-config.js"></script>
 
     <link rel="stylesheet" href="css/styles.css">
+    <!-- Aplica el tema guardado antes del primer pintado (evita el flash) -->
+    <script src="js/theme.js"></script>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-sky-500/30 selection:text-sky-200">
 
@@ -48,15 +50,32 @@
                 </div>
             </div>
 
-            <!-- Architecture Pipeline Pills -->
-            <div class="flex items-center gap-2 flex-wrap text-xs">
-                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 text-slate-300">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Dataset Depurado (Sin Data Leakage)</span>
+            <!-- Theme Switcher + Architecture Pipeline Pills -->
+            <div class="flex flex-col items-end gap-2.5">
+                <div class="theme-switcher" role="group" aria-label="Cambiar tema visual">
+                    <button type="button" class="theme-opt" data-theme-option="original" aria-pressed="true" title="Tema original (diseño actual)">
+                        <i data-lucide="monitor"></i>
+                        <span class="theme-label">Original</span>
+                    </button>
+                    <button type="button" class="theme-opt" data-theme-option="claro" aria-pressed="false" title="Tema claro con semáforo fuerte">
+                        <i data-lucide="sun"></i>
+                        <span class="theme-label">Claro</span>
+                    </button>
+                    <button type="button" class="theme-opt" data-theme-option="oscuro" aria-pressed="false" title="Tema oscuro con semáforo neón">
+                        <i data-lucide="moon"></i>
+                        <span class="theme-label">Oscuro</span>
+                    </button>
                 </div>
-                <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 text-sky-300 font-mono text-[11px]">
-                    <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
-                    <span>NN1 + NN2 + Forward Chaining</span>
+
+                <div class="flex items-center gap-2 flex-wrap justify-end text-xs">
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 text-slate-300">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span>Dataset Depurado (Sin Data Leakage)</span>
+                    </div>
+                    <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 text-sky-300 font-mono text-[11px]">
+                        <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
+                        <span>NN1 + NN2 + Forward Chaining</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -81,16 +100,16 @@
                 <!-- Dataset KPI Counters -->
                 <div class="flex items-center gap-2 sm:gap-3 flex-wrap text-xs">
                     <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300">
-                        Muestra Auditada: <strong class="text-white font-mono" id="kpiTotal">14</strong> obras
+                        Dataset Auditado: <strong class="text-white font-mono" id="kpiTotal">—</strong> obras
                     </span>
                     <span class="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-300">
-                        Normal: <strong class="font-mono" id="kpiNormal">0</strong>
+                        Normal: <strong class="font-mono" id="kpiNormal">—</strong>
                     </span>
                     <span class="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-300">
-                        Alerta: <strong class="font-mono" id="kpiAlerta">0</strong>
+                        Alerta: <strong class="font-mono" id="kpiAlerta">—</strong>
                     </span>
                     <span class="px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300">
-                        Crítico: <strong class="font-mono" id="kpiCritico">0</strong>
+                        Crítico: <strong class="font-mono" id="kpiCritico">—</strong>
                     </span>
                 </div>
             </div>
@@ -139,7 +158,7 @@
                 <div class="md:col-span-2 flex items-end">
                     <button 
                         id="btnAuditarBusqueda"
-                        class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-semibold text-sm shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 transition active:scale-[0.98]"
+                        class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white keep-white font-semibold text-sm shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 transition active:scale-[0.98]"
                     >
                         <i data-lucide="scan-search" class="w-4 h-4"></i>
                         <span>Auditar Obra</span>
@@ -156,14 +175,36 @@
                 <div id="searchResultsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"></div>
             </div>
 
+            <!-- TOTAL BACKEND AUDIT PROOF -->
+            <div class="rounded-xl bg-slate-950/70 border border-slate-800/80 p-3.5 space-y-2.5">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <span class="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        Prueba Auditada Total del Backend · Dataset completo
+                    </span>
+                    <span id="backendAuditStatus" class="text-[11px] font-mono text-slate-400">Cargando dataset…</span>
+                </div>
+                <div id="backendAuditGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                    <!-- Populated dynamically via JS -->
+                </div>
+                <div class="h-2.5 w-full rounded-full overflow-hidden flex bg-slate-800">
+                    <div id="barNormal" class="h-full bg-emerald-500 transition-all duration-700" style="width:0%"></div>
+                    <div id="barAlerta" class="h-full bg-amber-400 transition-all duration-700" style="width:0%"></div>
+                    <div id="barCritico" class="h-full bg-rose-500 transition-all duration-700" style="width:0%"></div>
+                </div>
+                <div id="backendAuditRules" class="flex flex-wrap gap-1.5 text-[10px] font-mono">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
             <!-- Quick Test Cases Pills -->
             <div class="pt-2 border-t border-slate-800/80">
                 <div class="flex items-center justify-between mb-2.5">
                     <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                         <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i>
-                        Casos de Prueba del Dataset Original (1 Clic para Auditar):
+                        Casos de Ejemplo del Dataset Real (1 Clic para Auditar):
                     </span>
-                    <span class="text-[11px] text-slate-500 hidden sm:inline">Incluye escenarios Normal, Alerta por m²/Vencimiento y Crítico por Desfasaje/Clausura</span>
+                    <span class="text-[11px] text-slate-500 hidden sm:inline">Casos extraídos de la hoja: clausura, paralización, desvío financiero, gran escala y obra menor</span>
                 </div>
                 <div id="quickCasesContainer" class="flex items-center gap-2 overflow-x-auto pb-1.5">
                     <!-- Populated dynamically via JS -->
@@ -189,14 +230,14 @@
                                     <span class="text-[11px] font-bold uppercase tracking-wider text-sky-400">Cajita 1 · Ficha Técnica & Modelos IA</span>
                                 </div>
                                 <h3 class="text-base sm:text-lg font-bold text-white font-mono tracking-tight" id="fichaExpediente">
-                                    EX-2024-46877598- -GCABA-DGROC
+                                    Cargando dataset…
                                 </h3>
                             </div>
                         </div>
 
-                        <div id="fichaBadgeEstado" class="self-start sm:self-auto px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                            <span>ESTADO NORMAL</span>
+                        <div id="fichaBadgeEstado" class="self-start sm:self-auto px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 bg-slate-700/40 text-slate-300 border border-slate-600/50">
+                            <span class="w-2 h-2 rounded-full bg-slate-400 animate-pulse"></span>
+                            <span>CARGANDO</span>
                         </div>
                     </div>
 
@@ -204,27 +245,27 @@
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div class="glass-subcard rounded-xl p-3">
                             <span class="text-[11px] text-slate-400 block">Domicilio Catastral</span>
-                            <span class="text-sm font-semibold text-white mt-0.5 block" id="fichaDomicilio">DEL LIBERTADOR AV. 7055</span>
+                            <span class="text-sm font-semibold text-white mt-0.5 block" id="fichaDomicilio">—</span>
                         </div>
                         <div class="glass-subcard rounded-xl p-3">
                             <span class="text-[11px] text-slate-400 block">Barrio / Comuna</span>
-                            <span class="text-sm font-semibold text-white mt-0.5 block" id="fichaBarrioComuna">Núñez · Comuna 13</span>
+                            <span class="text-sm font-semibold text-white mt-0.5 block" id="fichaBarrioComuna">—</span>
                         </div>
                         <div class="glass-subcard rounded-xl p-3">
-                            <span class="text-[11px] text-slate-400 block">Tipo de Obra</span>
-                            <span class="text-sm font-semibold text-sky-300 mt-0.5 block" id="fichaTipoObra">Obra Mayor</span>
+                            <span class="text-[11px] text-slate-400 block">Regla del Sistema Experto</span>
+                            <span class="text-sm font-semibold text-sky-300 mt-0.5 block" id="fichaTipoObra">—</span>
                         </div>
                         <div class="glass-subcard rounded-xl p-3">
                             <span class="text-[11px] text-slate-400 block">Superficie a Construir</span>
-                            <span class="text-sm font-bold font-mono text-white mt-0.5 block" id="fichaSuperficie">2.840,50 m²</span>
+                            <span class="text-sm font-bold font-mono text-white mt-0.5 block" id="fichaSuperficie">—</span>
                         </div>
                         <div class="glass-subcard rounded-xl p-3">
-                            <span class="text-[11px] text-slate-400 block">Último AVO Declarado</span>
-                            <span class="text-sm font-semibold text-slate-200 mt-0.5 block" id="fichaAvo">AVO 3 - Estructura</span>
+                            <span class="text-[11px] text-slate-400 block">Estado Actual DGROC</span>
+                            <span class="text-sm font-semibold text-slate-200 mt-0.5 block" id="fichaAvo">—</span>
                         </div>
                         <div class="glass-subcard rounded-xl p-3">
-                            <span class="text-[11px] text-slate-400 block">Estado Registral DGROC</span>
-                            <span class="text-sm font-semibold text-slate-200 mt-0.5 block" id="fichaEstadoObra">En Ejecución</span>
+                            <span class="text-[11px] text-slate-400 block">Estado de Salud (Red Neuronal)</span>
+                            <span class="text-sm font-semibold text-slate-200 mt-0.5 block" id="fichaEstadoObra">—</span>
                         </div>
                     </div>
 
@@ -238,18 +279,18 @@
                                         <i data-lucide="brain-circuit" class="w-3.5 h-3.5"></i>
                                         Red Neuronal 1 & Reg. Logística
                                     </span>
-                                    <h4 class="text-sm font-semibold text-white mt-0.5">Probabilidad de Éxito / Conformidad</h4>
+                                    <h4 class="text-sm font-semibold text-white mt-0.5">Probabilidad de Finalización (NN1)</h4>
                                 </div>
-                                <span class="text-2xl font-extrabold font-mono text-emerald-400" id="nn1ProbText">91.4%</span>
+                                <span class="text-2xl font-extrabold font-mono text-slate-400" id="nn1ProbText">—</span>
                             </div>
 
                             <div class="space-y-1.5">
                                 <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden p-0.5">
-                                    <div id="nn1ProbBar" class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-700" style="width: 91.4%"></div>
+                                    <div id="nn1ProbBar" class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-700" style="width: 0%"></div>
                                 </div>
                                 <div class="flex justify-between text-[11px] text-slate-400 font-mono">
                                     <span>Riesgo Alto (0%)</span>
-                                    <span id="nn1Clasificacion" class="text-emerald-300 font-semibold">Clasificación: Viable</span>
+                                    <span id="nn1Clasificacion" class="text-slate-400 font-semibold">Clasificación: —</span>
                                     <span>Óptimo (100%)</span>
                                 </div>
                             </div>
@@ -265,8 +306,8 @@
                                     </span>
                                     <h4 class="text-sm font-semibold text-white mt-0.5">Avance Físico vs. Financiero</h4>
                                 </div>
-                                <span id="desfasajeBadge" class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                                    Δ 3.0% (OK)
+                                <span id="desfasajeBadge" class="px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-slate-700/40 text-slate-300 border border-slate-600/50">
+                                    Δ —
                                 </span>
                             </div>
 
@@ -275,10 +316,10 @@
                                 <div>
                                     <div class="flex justify-between text-xs mb-1">
                                         <span class="text-slate-300">Avance Físico Real</span>
-                                        <span class="font-mono font-bold text-sky-300" id="avanceFisicoVal">68.0%</span>
+                                        <span class="font-mono font-bold text-sky-300" id="avanceFisicoVal">—</span>
                                     </div>
                                     <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                                        <div id="avanceFisicoBar" class="h-full bg-sky-400 rounded-full transition-all duration-700" style="width: 68%"></div>
+                                        <div id="avanceFisicoBar" class="h-full bg-sky-400 rounded-full transition-all duration-700" style="width: 0%"></div>
                                     </div>
                                 </div>
 
@@ -286,10 +327,10 @@
                                 <div>
                                     <div class="flex justify-between text-xs mb-1">
                                         <span class="text-slate-300">Presupuesto Ejecutado</span>
-                                        <span class="font-mono font-bold text-indigo-300" id="avanceFinancieroVal">71.0%</span>
+                                        <span class="font-mono font-bold text-indigo-300" id="avanceFinancieroVal">—</span>
                                     </div>
                                     <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                                        <div id="avanceFinancieroBar" class="h-full bg-indigo-400 rounded-full transition-all duration-700" style="width: 71%"></div>
+                                        <div id="avanceFinancieroBar" class="h-full bg-indigo-400 rounded-full transition-all duration-700" style="width: 0%"></div>
                                     </div>
                                 </div>
                             </div>
@@ -350,14 +391,14 @@
                             <div>
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Cajita 3 · Dictamen Híbrido Automatizado</span>
                                 <h3 class="text-base sm:text-lg font-bold text-white" id="diagTitulo">
-                                    Obra en Parámetros Normales de Ejecución
+                                    Esperando dataset publicado…
                                 </h3>
                             </div>
                         </div>
                     </div>
 
                     <p class="text-sm text-slate-300 leading-relaxed" id="diagExplicacion">
-                        El análisis conjunto de la Red Neuronal y el Sistema Experto confirma coherencia entre el avance físico declarado y la ejecución presupuestaria. No se detectan contravenciones ni vencimientos de permisos DGROC.
+                        Cargando el dataset completo de Google Sheets y ejecutando el motor de inferencia sobre cada registro.
                     </p>
 
                     <div class="rounded-xl bg-slate-950/75 border border-slate-800/90 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -367,7 +408,7 @@
                                 Acción Resolutiva Recomendada (Protocolo AGC / DGROC):
                             </span>
                             <p class="text-sm font-medium text-white" id="diagAccion">
-                                Mantener cronograma de inspecciones ordinarias según AVO vigente. Sin intervención urgente requerida.
+                                —
                             </p>
                         </div>
                     </div>
@@ -403,24 +444,30 @@
                             </span>
                             <span class="flex items-center gap-1.5 text-slate-300">
                                 <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]"></span>
-                                Alerta (&gt;1000m² / Venc.)
+                                Alerta (Desvío / Paralizada)
                             </span>
                             <span class="flex items-center gap-1.5 text-slate-300">
                                 <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]"></span>
-                                Crítico (Desfasaje / Clausura)
+                                Crítico (Clausura / Judicial)
                             </span>
                         </div>
-                        <span class="text-[11px] text-slate-400">Clic en un punto para auditar</span>
+                        <span class="text-[11px] text-slate-400"><span id="mapDatasetCount">Cargando dataset GCABA…</span> · puntos = dataset · LED = seleccionada</span>
                     </div>
 
                     <!-- Leaflet Map Container -->
                     <div class="relative flex-1 rounded-xl overflow-hidden border border-slate-700/70 min-h-[400px]">
                         <div id="cabaMap" class="w-full h-full min-h-[400px] z-10"></div>
-                        
+
+                        <!-- Dataset GCABA status pill -->
+                        <div id="mapDatasetStatus" class="absolute top-3 right-3 z-20 pointer-events-none bg-slate-950/85 backdrop-blur-md border border-sky-500/30 px-3 py-1.5 rounded-lg text-[11px] font-mono text-sky-200 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+                            <span>Cargando dataset GCABA…</span>
+                        </div>
+
                         <!-- Floating Coordinate HUD Overlay -->
                         <div class="absolute bottom-3 left-3 z-20 pointer-events-none bg-slate-950/85 backdrop-blur-md border border-slate-800 px-3 py-1.5 rounded-lg text-[11px] font-mono text-slate-300 flex items-center gap-2">
                             <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
-                            <span id="mapCoordsHud">WGS84: -34.5478, -58.4632 · Comuna 13</span>
+                            <span id="mapCoordsHud">WGS84: — · Esperando selección</span>
                         </div>
                     </div>
                 </article>
@@ -468,7 +515,7 @@
 
                         <button 
                             id="btnSaveDerekText"
-                            class="hidden px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 transition"
+                            class="hidden px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white keep-white flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 transition"
                         >
                             <i data-lucide="save" class="w-3.5 h-3.5"></i>
                             <span>Guardar Cambios</span>
@@ -549,6 +596,7 @@
     </footer>
 
     <!-- APPLICATION LOGIC -->
+    <script src="data/geocodes.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

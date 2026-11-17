@@ -1,21 +1,137 @@
+        /* ============================================================================
+           SISTEMA DE TEMAS
+           original : diseño actual (azul noche + acentos cian)
+           claro    : fondo claro, tarjetas blancas y semáforo saturado
+           oscuro   : tonos carbón apagados + semáforo neón
+           El tema se aplica con data-theme en <html> (ver js/theme.js).
+           ============================================================================ */
+        :root,
+        html[data-theme="original"] {
+            color-scheme: dark;
+            --app-bg: #050811;
+            --text-strong: #f8fafc;
+            --text-mid: #cbd5e1;
+            --text-soft: #94a3b8;
+            --panel-bg: rgba(15, 23, 42, 0.65);
+            --panel-border: rgba(148, 163, 184, 0.14);
+            --panel-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+            --sub-bg: rgba(10, 16, 31, 0.7);
+            --sub-border: rgba(148, 163, 184, 0.1);
+            --header-bg: rgba(5, 8, 17, 0.85);
+            --popup-bg: rgba(15, 23, 42, 0.92);
+            --popup-border: rgba(148, 163, 184, 0.25);
+            --popup-text: #f8fafc;
+            --map-bg: #070b14;
+            --scroll-track: #0a101f;
+            --scroll-thumb: #334155;
+            --scroll-thumb-hover: #475569;
+            --map-normal: #10b981;
+            --map-alerta: #f59e0b;
+            --map-critico: #f43f5e;
+            --switch-bg: rgba(2, 6, 23, 0.85);
+            --switch-border: rgba(148, 163, 184, 0.18);
+            --switch-active-bg: rgba(56, 189, 248, 0.16);
+            --switch-active-border: rgba(56, 189, 248, 0.45);
+            --switch-active-color: #e0f2fe;
+            --switch-active-shadow: 0 0 0 1px rgba(56, 189, 248, 0.15), 0 0 14px rgba(56, 189, 248, 0.18);
+        }
+
+        html[data-theme="claro"] {
+            color-scheme: light;
+            --app-bg: #eef2f7;
+            --text-strong: #0b1220;
+            --text-mid: #334155;
+            --text-soft: #5c6b82;
+            --panel-bg: rgba(255, 255, 255, 0.9);
+            --panel-border: rgba(15, 23, 42, 0.1);
+            --panel-shadow: 0 10px 26px -14px rgba(15, 23, 42, 0.35);
+            --sub-bg: #f4f7fb;
+            --sub-border: rgba(15, 23, 42, 0.08);
+            --header-bg: rgba(255, 255, 255, 0.92);
+            --popup-bg: rgba(255, 255, 255, 0.98);
+            --popup-border: rgba(15, 23, 42, 0.16);
+            --popup-text: #0b1220;
+            --map-bg: #e8edf4;
+            --scroll-track: #e2e8f0;
+            --scroll-thumb: #94a3b8;
+            --scroll-thumb-hover: #64748b;
+            --map-normal: #16a34a;
+            --map-alerta: #f59e0b;
+            --map-critico: #e11d48;
+            --switch-bg: #ffffff;
+            --switch-border: rgba(15, 23, 42, 0.12);
+            --switch-active-bg: #0284c7;
+            --switch-active-border: #0284c7;
+            --switch-active-color: #ffffff;
+            --switch-active-shadow: 0 6px 16px -6px rgba(2, 132, 199, 0.65);
+        }
+
+        html[data-theme="oscuro"] {
+            color-scheme: dark;
+            --app-bg: #07070a;
+            --text-strong: #ececf4;
+            --text-mid: #bdbdcd;
+            --text-soft: #7c7c92;
+            --panel-bg: rgba(18, 18, 26, 0.72);
+            --panel-border: rgba(255, 255, 255, 0.07);
+            --panel-shadow: 0 14px 40px -16px rgba(0, 0, 0, 0.9);
+            --sub-bg: rgba(9, 9, 14, 0.78);
+            --sub-border: rgba(255, 255, 255, 0.06);
+            --header-bg: rgba(5, 5, 8, 0.9);
+            --popup-bg: rgba(14, 14, 20, 0.96);
+            --popup-border: rgba(255, 255, 255, 0.12);
+            --popup-text: #ececf4;
+            --map-bg: #050508;
+            --scroll-track: #0b0b10;
+            --scroll-thumb: #2a2a37;
+            --scroll-thumb-hover: #3a3a4a;
+            --map-normal: #39ff9e;
+            --map-alerta: #ffd23f;
+            --map-critico: #ff4d7d;
+            --switch-bg: #101018;
+            --switch-border: rgba(255, 255, 255, 0.08);
+            --switch-active-bg: rgba(56, 232, 255, 0.14);
+            --switch-active-border: rgba(56, 232, 255, 0.55);
+            --switch-active-color: #9ff3ff;
+            --switch-active-shadow: 0 0 12px rgba(56, 232, 255, 0.35), inset 0 0 10px rgba(56, 232, 255, 0.08);
+        }
+
         body {
-            background-color: #050811;
-            background-image: 
+            background-color: var(--app-bg);
+            color: var(--text-strong);
+            overflow-x: hidden;
+            transition: background-color 0.35s ease, color 0.35s ease;
+        }
+
+        html[data-theme="original"] body {
+            background-image:
                 radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.06) 0px, transparent 50%),
                 radial-gradient(at 50% 100%, rgba(244, 63, 94, 0.05) 0px, transparent 50%);
-            color: #f8fafc;
-            overflow-x: hidden;
+        }
+
+        html[data-theme="claro"] body {
+            background-image:
+                radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.1) 0px, transparent 55%),
+                radial-gradient(at 100% 0%, rgba(22, 163, 74, 0.1) 0px, transparent 55%),
+                radial-gradient(at 50% 100%, rgba(225, 29, 72, 0.07) 0px, transparent 55%);
+        }
+
+        html[data-theme="oscuro"] body {
+            background-image:
+                radial-gradient(at 0% 0%, rgba(56, 232, 255, 0.07) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(57, 255, 158, 0.05) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(255, 77, 125, 0.06) 0px, transparent 50%);
         }
 
         /* Glassmorphism Cards */
         .glass-card {
-            background: rgba(15, 23, 42, 0.65);
+            background: var(--panel-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(148, 163, 184, 0.14);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--panel-border);
+            box-shadow: var(--panel-shadow);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.35s ease;
         }
 
         .glass-card:hover {
@@ -23,8 +139,9 @@
         }
 
         .glass-subcard {
-            background: rgba(10, 16, 31, 0.7);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            background: var(--sub-bg);
+            border: 1px solid var(--sub-border);
+            transition: background-color 0.35s ease, border-color 0.35s ease;
         }
 
         /* Custom Scrollbar */
@@ -33,36 +150,57 @@
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0a101f;
+            background: var(--scroll-track);
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: var(--scroll-thumb);
             border-radius: 9999px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: var(--scroll-thumb-hover);
         }
 
         /* Leaflet Map Customizations */
         .leaflet-container {
-            background-color: #070b14 !important;
+            background-color: var(--map-bg) !important;
             font-family: 'Inter', sans-serif !important;
         }
-        
+
         .leaflet-popup-content-wrapper {
-            background: rgba(15, 23, 42, 0.92) !important;
+            background: var(--popup-bg) !important;
             backdrop-filter: blur(12px);
-            color: #f8fafc !important;
-            border: 1px solid rgba(148, 163, 184, 0.25);
+            color: var(--popup-text) !important;
+            border: 1px solid var(--popup-border);
             border-radius: 14px !important;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.75) !important;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55) !important;
         }
         .leaflet-popup-tip {
-            background: rgba(15, 23, 42, 0.92) !important;
+            background: var(--popup-bg) !important;
         }
         .leaflet-popup-close-button {
-            color: #94a3b8 !important;
+            color: var(--text-soft) !important;
             padding: 6px 8px !important;
+        }
+
+        .leaflet-control-attribution {
+            background: var(--popup-bg) !important;
+            color: var(--text-soft) !important;
+        }
+        .leaflet-control-attribution a {
+            color: var(--text-mid) !important;
+        }
+        .leaflet-bar a {
+            background-color: var(--sub-bg) !important;
+            color: var(--text-strong) !important;
+            border-bottom-color: var(--panel-border) !important;
+        }
+        .leaflet-bar a:hover {
+            background-color: var(--panel-bg) !important;
+        }
+
+        /* Basemap oscurecido solo en el tema oscuro */
+        html[data-theme="oscuro"] .leaflet-tile-pane {
+            filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85) saturate(0.6);
         }
 
         /* LED Radar Pulsing Markers on Map */
@@ -167,4 +305,268 @@
                 transparent
             );
             background-size: 1rem 1rem;
+        }
+
+        /* ============================================================================
+           SELECTOR DE TEMA (header superior derecho)
+           ============================================================================ */
+        .theme-switcher {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            padding: 3px;
+            border-radius: 12px;
+            background: var(--switch-bg);
+            border: 1px solid var(--switch-border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: background-color 0.35s ease, border-color 0.35s ease;
+        }
+
+        .theme-opt {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 9px;
+            border-radius: 9px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-soft);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            line-height: 1;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .theme-opt svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2.2;
+        }
+
+        .theme-opt:hover {
+            color: var(--text-strong);
+            background: rgba(148, 163, 184, 0.14);
+        }
+
+        .theme-opt.is-active {
+            color: var(--switch-active-color);
+            background: var(--switch-active-bg);
+            border-color: var(--switch-active-border);
+            box-shadow: var(--switch-active-shadow);
+        }
+
+        .theme-opt .theme-label {
+            display: none;
+        }
+
+        @media (min-width: 640px) {
+            .theme-opt .theme-label {
+                display: inline;
+            }
+        }
+
+        /* ============================================================================
+           TEMA CLARO · semáforo fuerte sobre superficies blancas
+           ============================================================================ */
+        [data-theme="claro"] [class*="bg-civic-950"] {
+            background-color: var(--header-bg) !important;
+        }
+        [data-theme="claro"] [class*="bg-slate-950"] {
+            background-color: #eef2f7 !important;
+        }
+        [data-theme="claro"] [class*="bg-slate-900"] {
+            background-color: #f8fafc !important;
+        }
+        [data-theme="claro"] [class*="bg-slate-800"] {
+            background-color: #e2e8f0 !important;
+        }
+        [data-theme="claro"] [class*="bg-slate-700"] {
+            background-color: #dbe3ee !important;
+        }
+
+        [data-theme="claro"] .text-white:not(.keep-white),
+        [data-theme="claro"] .text-slate-100,
+        [data-theme="claro"] .text-slate-200 {
+            color: var(--text-strong) !important;
+        }
+        [data-theme="claro"] .text-slate-300 {
+            color: var(--text-mid) !important;
+        }
+        [data-theme="claro"] .text-slate-400,
+        [data-theme="claro"] .text-slate-500 {
+            color: var(--text-soft) !important;
+        }
+        [data-theme="claro"] .placeholder-slate-500::placeholder {
+            color: #8fa0b8 !important;
+        }
+
+        [data-theme="claro"] [class*="text-sky-"] {
+            color: #0369a1 !important;
+        }
+        [data-theme="claro"] [class*="text-cyan-"] {
+            color: #0e7490 !important;
+        }
+        [data-theme="claro"] [class*="text-emerald-"] {
+            color: #047857 !important;
+        }
+        [data-theme="claro"] [class*="text-amber-"] {
+            color: #b45309 !important;
+        }
+        [data-theme="claro"] [class*="text-rose-"] {
+            color: #be123c !important;
+        }
+        [data-theme="claro"] [class*="text-indigo-"] {
+            color: #4338ca !important;
+        }
+
+        [data-theme="claro"] [class~="bg-sky-400"],
+        [data-theme="claro"] [class~="bg-sky-500"] {
+            background-color: #0284c7 !important;
+        }
+        [data-theme="claro"] [class~="bg-emerald-400"],
+        [data-theme="claro"] [class~="bg-emerald-500"],
+        [data-theme="claro"] [class~="bg-emerald-600"] {
+            background-color: #16a34a !important;
+        }
+        [data-theme="claro"] [class~="bg-amber-400"],
+        [data-theme="claro"] [class~="bg-amber-500"] {
+            background-color: #f59e0b !important;
+        }
+        [data-theme="claro"] [class~="bg-rose-400"],
+        [data-theme="claro"] [class~="bg-rose-500"] {
+            background-color: #e11d48 !important;
+        }
+
+        [data-theme="claro"] [class*="border-slate-"] {
+            border-color: rgba(15, 23, 42, 0.12) !important;
+        }
+
+        [data-theme="claro"] .led-core {
+            border-color: #0b1220;
+        }
+        [data-theme="claro"] .led-normal .led-core {
+            background-color: #16a34a;
+            box-shadow: 0 0 10px rgba(22, 163, 74, 0.55);
+        }
+        [data-theme="claro"] .led-normal .led-ring {
+            background-color: rgba(22, 163, 74, 0.35);
+        }
+        [data-theme="claro"] .led-alerta .led-core {
+            background-color: #f59e0b;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+        }
+        [data-theme="claro"] .led-alerta .led-ring {
+            background-color: rgba(245, 158, 11, 0.4);
+        }
+        [data-theme="claro"] .led-critico .led-core {
+            background-color: #e11d48;
+            box-shadow: 0 0 12px rgba(225, 29, 72, 0.6);
+        }
+        [data-theme="claro"] .led-critico .led-ring {
+            background-color: rgba(225, 29, 72, 0.45);
+        }
+
+        /* ============================================================================
+           TEMA OSCURO · carbón apagado + semáforo neón
+           ============================================================================ */
+        [data-theme="oscuro"] [class*="bg-civic-950"] {
+            background-color: var(--header-bg) !important;
+        }
+        [data-theme="oscuro"] [class*="bg-slate-950"] {
+            background-color: #08080c !important;
+        }
+        [data-theme="oscuro"] [class*="bg-slate-900"] {
+            background-color: #101018 !important;
+        }
+        [data-theme="oscuro"] [class*="bg-slate-800"] {
+            background-color: #1c1c26 !important;
+        }
+        [data-theme="oscuro"] [class*="bg-slate-700"] {
+            background-color: #262633 !important;
+        }
+
+        [data-theme="oscuro"] .text-white,
+        [data-theme="oscuro"] .text-slate-100,
+        [data-theme="oscuro"] .text-slate-200 {
+            color: var(--text-strong) !important;
+        }
+        [data-theme="oscuro"] .text-slate-300 {
+            color: var(--text-mid) !important;
+        }
+        [data-theme="oscuro"] .text-slate-400,
+        [data-theme="oscuro"] .text-slate-500 {
+            color: var(--text-soft) !important;
+        }
+        [data-theme="oscuro"] .placeholder-slate-500::placeholder {
+            color: #6b6b80 !important;
+        }
+
+        [data-theme="oscuro"] [class*="text-sky-"],
+        [data-theme="oscuro"] [class*="text-cyan-"] {
+            color: #38e8ff !important;
+        }
+        [data-theme="oscuro"] [class*="text-emerald-"] {
+            color: #39ff9e !important;
+        }
+        [data-theme="oscuro"] [class*="text-amber-"] {
+            color: #ffd23f !important;
+        }
+        [data-theme="oscuro"] [class*="text-rose-"] {
+            color: #ff5c8a !important;
+        }
+        [data-theme="oscuro"] [class*="text-indigo-"] {
+            color: #a5b4ff !important;
+        }
+
+        [data-theme="oscuro"] [class~="bg-sky-400"],
+        [data-theme="oscuro"] [class~="bg-sky-500"] {
+            background-color: #38e8ff !important;
+        }
+        [data-theme="oscuro"] [class~="bg-emerald-400"],
+        [data-theme="oscuro"] [class~="bg-emerald-500"],
+        [data-theme="oscuro"] [class~="bg-emerald-600"] {
+            background-color: #39ff9e !important;
+        }
+        [data-theme="oscuro"] [class~="bg-amber-400"],
+        [data-theme="oscuro"] [class~="bg-amber-500"] {
+            background-color: #ffd23f !important;
+        }
+        [data-theme="oscuro"] [class~="bg-rose-400"],
+        [data-theme="oscuro"] [class~="bg-rose-500"] {
+            background-color: #ff4d7d !important;
+        }
+
+        [data-theme="oscuro"] [class*="border-slate-8"],
+        [data-theme="oscuro"] [class*="border-slate-7"],
+        [data-theme="oscuro"] [class*="border-slate-6"] {
+            border-color: rgba(255, 255, 255, 0.09) !important;
+        }
+        [data-theme="oscuro"] [class*="border-slate-5"] {
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
+        [data-theme="oscuro"] .led-normal .led-core {
+            background-color: #39ff9e;
+            box-shadow: 0 0 10px #39ff9e, 0 0 26px rgba(57, 255, 158, 0.75);
+        }
+        [data-theme="oscuro"] .led-normal .led-ring {
+            background-color: rgba(57, 255, 158, 0.35);
+        }
+        [data-theme="oscuro"] .led-alerta .led-core {
+            background-color: #ffd23f;
+            box-shadow: 0 0 10px #ffd23f, 0 0 26px rgba(255, 210, 63, 0.75);
+        }
+        [data-theme="oscuro"] .led-alerta .led-ring {
+            background-color: rgba(255, 210, 63, 0.35);
+        }
+        [data-theme="oscuro"] .led-critico .led-core {
+            background-color: #ff4d7d;
+            box-shadow: 0 0 12px #ff4d7d, 0 0 32px rgba(255, 77, 125, 0.85);
+        }
+        [data-theme="oscuro"] .led-critico .led-ring {
+            background-color: rgba(255, 77, 125, 0.5);
         }

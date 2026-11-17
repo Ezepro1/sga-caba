@@ -1,479 +1,260 @@
         /**
          * ============================================================================
-         * 1. DATASET DE OBRAS EN CABA (REGISTROS REALES DEPURADOS SIN DATA LEAKAGE)
-         * Coordenadas WGS84 verificadas en la Ciudad Autónoma de Buenos Aires
+         * 1. DATASET DE OBRAS EN CABA (GOOGLE SHEETS PUBLICADO COMO CSV)
+         * La hoja no trae lat/lng: data/geocodes.js resuelve las coordenadas por
+         * dirección con Georef + USIG (ver tools/geocode_obras.py).
          * ============================================================================
          */
-        const OBRAS_DATASET = [
-            {
-                id: "OB-01",
-                etiquetaCaso: "Normal · Obra Mayor",
-                expediente: "EX-2024-46877598- -GCABA-DGROC",
-                calle: "DEL LIBERTADOR AV.",
-                altura: 7055,
-                barrio: "Núñez",
-                comuna: "Comuna 13",
-                lat: -34.5478,
-                lng: -58.4632,
-                tipoObra: "Obra Mayor",
-                superficie: 2840.50,
-                ultimoAvo: "AVO 3 - Estructura",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 68.0,
-                avanceFinanciero: 71.0,
-                probExitoNN1: 91.4
-            },
-            {
-                id: "OB-02",
-                etiquetaCaso: "Crítico · Desfasaje Financiero",
-                expediente: "EX-2024-31904821- -GCABA-DGROC",
-                calle: "FITZ ROY",
-                altura: 801,
-                barrio: "Villa Crespo",
-                comuna: "Comuna 15",
-                lat: -34.5912,
-                lng: -58.4428,
-                tipoObra: "Obra Media",
-                superficie: 1450.00,
-                ultimoAvo: "AVO 2 - Excavación y Submuración",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 34.0,
-                avanceFinanciero: 66.5, // Desfasaje de 32.5% (> 15% umbral)
-                probExitoNN1: 28.6
-            },
-            {
-                id: "OB-03",
-                etiquetaCaso: "Crítico · Clausura AGC",
-                expediente: "EX-2023-28451902- -GCABA-DGROC",
-                calle: "PERU",
-                altura: 1560,
-                barrio: "San Telmo",
-                comuna: "Comuna 1",
-                lat: -34.6254,
-                lng: -58.3746,
-                tipoObra: "Obra Mayor",
-                superficie: 3120.00,
-                ultimoAvo: "AVO 1 - Inicio de Obra",
-                estadoRegistral: "Clausurada por Contravención",
-                permisoVencido: false,
-                clausurada: true,
-                paralizada: false,
-                avanceFisico: 22.0,
-                avanceFinanciero: 45.0,
-                probExitoNN1: 14.2
-            },
-            {
-                id: "OB-04",
-                etiquetaCaso: "Alerta · Superficie > 1000m²",
-                expediente: "EX-2024-19283745- -GCABA-DGROC",
-                calle: "CABILDO AV.",
-                altura: 2450,
-                barrio: "Belgrano",
-                comuna: "Comuna 13",
-                lat: -34.5594,
-                lng: -58.4589,
-                tipoObra: "Obra Mayor",
-                superficie: 4680.75,
-                ultimoAvo: "AVO 3 - Estructura",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 55.0,
-                avanceFinanciero: 58.0,
-                probExitoNN1: 82.0
-            },
-            {
-                id: "OB-05",
-                etiquetaCaso: "Alerta · Permiso Vencido",
-                expediente: "EX-2022-40918273- -GCABA-DGROC",
-                calle: "CORRIENTES AV.",
-                altura: 3240,
-                barrio: "Balvanera",
-                comuna: "Comuna 3",
-                lat: -34.6039,
-                lng: -58.4112,
-                tipoObra: "Obra Media",
-                superficie: 890.20,
-                ultimoAvo: "AVO 2 - Demolición",
-                estadoRegistral: "Permiso Vencido - Sin Renovación",
-                permisoVencido: true,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 41.0,
-                avanceFinanciero: 44.0,
-                probExitoNN1: 54.5
-            },
-            {
-                id: "OB-06",
-                etiquetaCaso: "Crítico · Obra Paralizada",
-                expediente: "EX-2023-11209384- -GCABA-DGROC",
-                calle: "JUAN B. JUSTO AV.",
-                altura: 4820,
-                barrio: "Villa General Mitre",
-                comuna: "Comuna 11",
-                lat: -34.6062,
-                lng: -58.4685,
-                tipoObra: "Obra Mayor",
-                superficie: 2190.00,
-                ultimoAvo: "AVO 2 - Excavación",
-                estadoRegistral: "Paralizada",
-                permisoVencido: true,
-                clausurada: false,
-                paralizada: true,
-                avanceFisico: 19.5,
-                avanceFinanciero: 48.0,
-                probExitoNN1: 18.9
-            },
-            {
-                id: "OB-07",
-                etiquetaCaso: "Normal · Obra Menor",
-                expediente: "EX-2024-50129384- -GCABA-DGROC",
-                calle: "GORRITI",
-                altura: 4920,
-                barrio: "Palermo",
-                comuna: "Comuna 14",
-                lat: -34.5881,
-                lng: -58.4294,
-                tipoObra: "Obra Menor",
-                superficie: 420.00,
-                ultimoAvo: "AVO 4 - Terminaciones",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 86.0,
-                avanceFinanciero: 88.5,
-                probExitoNN1: 96.2
-            },
-            {
-                id: "OB-08",
-                etiquetaCaso: "Normal · Microobra",
-                expediente: "EX-2024-44102938- -GCABA-DGROC",
-                calle: "PEDRO GOYENA AV.",
-                altura: 840,
-                barrio: "Caballito",
-                comuna: "Comuna 6",
-                lat: -34.6248,
-                lng: -58.4385,
-                tipoObra: "Microobra",
-                superficie: 215.40,
-                ultimoAvo: "AVO 4 - Finalización",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 92.0,
-                avanceFinanciero: 90.0,
-                probExitoNN1: 97.8
-            },
-            {
-                id: "OB-09",
-                etiquetaCaso: "Alerta · Gran Escala Puerto",
-                expediente: "EX-2024-38765432- -GCABA-DGROC",
-                calle: "JUANA MANSO",
-                altura: 1180,
-                barrio: "Puerto Madero",
-                comuna: "Comuna 1",
-                lat: -34.6115,
-                lng: -58.3624,
-                tipoObra: "Obra Mayor",
-                superficie: 6450.00,
-                ultimoAvo: "AVO 3 - Estructura",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 61.0,
-                avanceFinanciero: 64.5,
-                probExitoNN1: 84.7
-            },
-            {
-                id: "OB-10",
-                etiquetaCaso: "Crítico · Desvío Presupuestario",
-                expediente: "EX-2023-49812376- -GCABA-DGROC",
-                calle: "RIVADAVIA AV.",
-                altura: 6750,
-                barrio: "Flores",
-                comuna: "Comuna 7",
-                lat: -34.6291,
-                lng: -58.4612,
-                tipoObra: "Obra Mayor",
-                superficie: 1890.00,
-                ultimoAvo: "AVO 2 - Submuración",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 29.0,
-                avanceFinanciero: 53.5, // Desfasaje 24.5%
-                probExitoNN1: 33.4
-            },
-            {
-                id: "OB-11",
-                etiquetaCaso: "Normal · Residencial",
-                expediente: "EX-2024-47291045- -GCABA-DGROC",
-                calle: "ALVAREZ THOMAS AV.",
-                altura: 1950,
-                barrio: "Villa Ortúzar",
-                comuna: "Comuna 15",
-                lat: -34.5819,
-                lng: -58.4661,
-                tipoObra: "Obra Media",
-                superficie: 780.60,
-                ultimoAvo: "AVO 3 - Albañilería",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 74.0,
-                avanceFinanciero: 75.5,
-                probExitoNN1: 93.1
-            },
-            {
-                id: "OB-12",
-                etiquetaCaso: "Alerta · Demolición > 1000m²",
-                expediente: "EX-2024-29384756- -GCABA-DGROC",
-                calle: "SANTA FE AV.",
-                altura: 1845,
-                barrio: "Recoleta",
-                comuna: "Comuna 2",
-                lat: -34.5956,
-                lng: -58.3937,
-                tipoObra: "Demolición Total / Obra Mayor",
-                superficie: 1620.00,
-                ultimoAvo: "AVO 1 - Demolición",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 45.0,
-                avanceFinanciero: 47.0,
-                probExitoNN1: 79.5
-            },
-            {
-                id: "OB-13",
-                etiquetaCaso: "Normal · Rehabilitación",
-                expediente: "EX-2024-41029381- -GCABA-DGROC",
-                calle: "CASEROS AV.",
-                altura: 2890,
-                barrio: "Parque Patricios",
-                comuna: "Comuna 4",
-                lat: -34.6368,
-                lng: -58.4045,
-                tipoObra: "Obra Menor",
-                superficie: 610.00,
-                ultimoAvo: "AVO 3 - Instalaciones",
-                estadoRegistral: "En Ejecución",
-                permisoVencido: false,
-                clausurada: false,
-                paralizada: false,
-                avanceFisico: 79.0,
-                avanceFinanciero: 80.5,
-                probExitoNN1: 94.0
-            },
-            {
-                id: "OB-14",
-                etiquetaCaso: "Crítico · Clausura + Desvío",
-                expediente: "EX-2023-35647382- -GCABA-DGROC",
-                calle: "BOEDO AV.",
-                altura: 1120,
-                barrio: "Boedo",
-                comuna: "Comuna 5",
-                lat: -34.6264,
-                lng: -58.4165,
-                tipoObra: "Obra Media",
-                superficie: 1150.00,
-                ultimoAvo: "AVO 1 - Excavación",
-                estadoRegistral: "Clausurada - Intimación Vigente",
-                permisoVencido: true,
-                clausurada: true,
-                paralizada: true,
-                avanceFisico: 15.0,
-                avanceFinanciero: 42.0,
-                probExitoNN1: 11.8
-            }
-        ];
+        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTpOche_nf-u-NvPAV7YWBGRUQ9HgtFByqD2GG5Yt8ORcnsCKizWHEPacbMjNo4Nb8Vu-7w1sJ27H_D/pub?output=csv';
+
+        let datasetSheet = [];
+        let obrasEjemplo = [];
+        let datasetAuditMs = 0;
+        let sheetLayer = null;
+        let selectedMarker = null;
+        let currentObraId = null;
+        let map = null;
 
         /**
          * ============================================================================
-         * 2. MOTOR DE INFERENCIA HÍBRIDO (FORWARD CHAINING + REDES NEURONALES)
-         * Evalúa hechos iniciales, aplica reglas SI -> ENTONCES y determina severidad
+         * 2. UTILIDADES DEL DATASET
          * ============================================================================
          */
-        function auditarExpediente(obra) {
+        function escapeHtmlSheet(text) {
+            return String(text ?? '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
+        // Parser CSV mínimo: soporta comillas, comas y saltos de línea dentro de campos
+        function parseCSVSheet(text) {
+            const rows = [];
+            let row = [];
+            let field = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+
+                if (inQuotes) {
+                    if (c === '"') {
+                        if (text[i + 1] === '"') { field += '"'; i++; }
+                        else { inQuotes = false; }
+                    } else {
+                        field += c;
+                    }
+                    continue;
+                }
+
+                if (c === '"') inQuotes = true;
+                else if (c === ',') { row.push(field); field = ''; }
+                else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+                else if (c !== '\r') field += c;
+            }
+
+            if (field !== '' || row.length) { row.push(field); rows.push(row); }
+            return rows;
+        }
+
+        function csvSheetToObjects(text) {
+            const rows = parseCSVSheet(text);
+            if (!rows.length) return [];
+            const headers = rows[0].map(h => h.trim());
+            return rows.slice(1).map(values => {
+                const obj = {};
+                headers.forEach((h, i) => { obj[h] = values[i] ?? ''; });
+                return obj;
+            });
+        }
+
+        // Clasificación usada por el mapa y por el motor: la hoja trae la salud
+        // financiera en estado_salud_rn y el estado registral en estado_actual.
+        function severidadSheet(obra) {
+            const estado = (obra.estado_actual || '').toLowerCase();
+            const salud = (obra.estado_salud_rn || '').toLowerCase();
+
+            if (/clausur|contravenci|judicial/.test(estado)) return 'CRITICO';
+            if (salud.includes('alerta') || /paralizad/.test(estado)) return 'ALERTA';
+            return 'NORMAL';
+        }
+
+        /**
+         * ============================================================================
+         * 3. MOTOR DE INFERENCIA SOBRE EL DATASET REAL
+         * Reproduce la clasificación de la hoja y expone la traza de reglas para
+         * las cajitas 2 y 3. No modifica los datos: solo deriva hechos y dictamen.
+         * ============================================================================
+         */
+        function construirDiagnosticoSheet(obra, nivelRiesgo, desfasaje, flags) {
+            const motivoBackend = (obra.motivo || '').trim();
+            const accionBackend = (obra.accion || '').trim();
+            const saludLimpia = (obra.salud || '').replace(/[^\x20-\x7E\u00C0-\u024F]/g, '').trim();
+
+            if (nivelRiesgo === 'CRITICO') {
+                return {
+                    nivel: 'CRITICO',
+                    badgeText: 'ESTADO CRÍTICO',
+                    titulo: 'Dictamen Crítico: Intervención Prioritaria Requerida',
+                    explicacion: motivoBackend || `El motor detectó una irregularidad registral crítica (${obra.estado_actual}).`,
+                    accion: accionBackend || 'Disponer inspección presencial urgente de la AGC y suspender nuevas aprobaciones hasta regularizar la situación.'
+                };
+            }
+
+            if (nivelRiesgo === 'ALERTA') {
+                const explicacion = flags.paralizada
+                    ? (motivoBackend || `La obra figura como "${obra.estado_actual}".`)
+                    : `La Red Neuronal detectó un desvío financiero de ${desfasaje.toFixed(1)}% (${saludLimpia || 'alerta'}). ${motivoBackend}`.trim();
+
+                return {
+                    nivel: 'ALERTA',
+                    badgeText: 'ALERTA PREVENTIVA',
+                    titulo: 'Dictamen de Alerta: Monitoreo y Verificación Especial',
+                    explicacion,
+                    accion: accionBackend || 'Asignar auditoría técnica programada y validar la documentación del último AVO declarado.'
+                };
+            }
+
+            return {
+                nivel: 'NORMAL',
+                badgeText: 'ESTADO NORMAL',
+                titulo: 'Dictamen Favorable: Obra en Parámetros Normales',
+                explicacion: motivoBackend || 'El motor no detectó clausuras, paralizaciones ni desvíos financieros relevantes.',
+                accion: accionBackend || 'Mantener el flujo habitual de seguimiento digital y aprobar la continuidad del cronograma de AVO.'
+            };
+        }
+
+        function auditarObraSheet(obra) {
+            const estado = (obra.estado_actual || '').toLowerCase();
+            const salud = (obra.salud || '').toLowerCase();
             const desfasaje = Math.abs(obra.avanceFinanciero - obra.avanceFisico);
             const desfasajeConSigno = +(obra.avanceFinanciero - obra.avanceFisico).toFixed(1);
-            
+            const saludLimpia = (obra.salud || 'SIN DATO').replace(/[^\x20-\x7E\u00C0-\u024F]/g, '').trim();
+
             // Base de Hechos Iniciales (Working Memory)
             const hechos = [
-                `tipo_obra("${obra.tipoObra}")`,
-                `superficie_m2(${obra.superficie})`,
-                `ultimo_avo("${obra.ultimoAvo}")`,
-                `prob_nn1(${obra.probExitoNN1}%)`,
+                `estado_actual("${obra.estado_actual || 'SIN DATO'}")`,
+                `superficie_m2(${obra.superficie.toLocaleString('es-AR')})`,
+                `prob_finalizacion_nn1(${obra.probabilidad.toFixed(1)}%)`,
+                `avance_fisico(${obra.avanceFisico.toFixed(1)}%)`,
+                `avance_financiero(${obra.avanceFinanciero.toFixed(1)}%)`,
                 `delta_financiero_fisico(${desfasajeConSigno > 0 ? '+' : ''}${desfasajeConSigno}%)`,
-                `permiso_vencido(${obra.permisoVencido ? 'VERDADERO' : 'FALSO'})`,
-                `estado_clausura(${obra.clausurada ? 'ACTIVA' : 'NINGUNA'})`
+                `estado_salud_rn("${saludLimpia}")`,
+                `regla_experta("${obra.regla || 'SIN REGLA'}")`
             ];
 
             const reglasEvaluadas = [];
-            let nivelRiesgo = "NORMAL"; // NORMAL | ALERTA | CRITICO
+            let nivelRiesgo = 'NORMAL';
 
-            // REGLA R1: Verificación de Clausura o Paralización Registral
-            if (obra.clausurada || obra.paralizada) {
-                nivelRiesgo = "CRITICO";
+            // R1: Clausura / contravención / proceso judicial
+            const clausura = /clausur|contravenci|judicial/.test(estado);
+            if (clausura) {
+                nivelRiesgo = 'CRITICO';
                 reglasEvaluadas.push({
-                    id: "R1-CONTRAVENCION",
-                    estado: "critico",
-                    condicion: `SI (clausurada == ${obra.clausurada} O paralizada == ${obra.paralizada})`,
-                    accion: `ENTONCES disparar ALERTA_CRITICA_AGC y bloquear certificación de avance.`,
-                    detalle: `Se detecta irregularidad grave en estado registral (${obra.estadoRegistral}).`
+                    id: 'R1-CONTRAVENCION',
+                    estado: 'critico',
+                    condicion: `SI estado_actual("${obra.estado_actual}") contiene clausura / contravención / judicial`,
+                    accion: 'ENTONCES disparar ALERTA_CRITICA_AGC y bloquear la certificación de avance.',
+                    detalle: 'La hoja registra una irregularidad registral grave que exige intervención de la AGC.'
                 });
             } else {
                 reglasEvaluadas.push({
-                    id: "R1-CONTRAVENCION",
-                    estado: "ok",
-                    condicion: `SI (clausurada == FALSO Y paralizada == FALSO)`,
-                    accion: `ENTONCES validar continuidad operativa legal ante DGROC.`,
-                    detalle: `Sin clausuras preventivas ni paralizaciones vigentes en el expediente.`
+                    id: 'R1-CONTRAVENCION',
+                    estado: 'ok',
+                    condicion: `SI estado_actual("${obra.estado_actual || 'SIN DATO'}") NO contiene clausura / contravención / judicial`,
+                    accion: 'ENTONCES validar continuidad operativa legal ante DGROC.',
+                    detalle: 'Sin clausuras, contravenciones ni procesos judiciales vigentes.'
                 });
             }
 
-            // REGLA R2: Coherencia Física vs Financiera (Red Neuronal 2 - Umbral 15%)
-            if (desfasaje > 15.0) {
-                nivelRiesgo = "CRITICO";
+            // R2: Paralización declarada
+            const paralizada = /paralizad/.test(estado);
+            if (paralizada) {
+                if (nivelRiesgo === 'NORMAL') nivelRiesgo = 'ALERTA';
                 reglasEvaluadas.push({
-                    id: "R2-DESFASAJE-NN2",
-                    estado: "critico",
-                    condicion: `SI (|Presupuesto_Ejecutado (${obra.avanceFinanciero}%) - Avance_Físico (${obra.avanceFisico}%)| = ${desfasaje.toFixed(1)}% > 15.0%)`,
-                    accion: `ENTONCES inferir DESVIACION_FINANCIERA_SEVERA y solicitar auditoría contable/técnica.`,
-                    detalle: `El gasto ejecutado supera en ${desfasaje.toFixed(1)} puntos al avance físico real predicho por NN2.`
+                    id: 'R2-PARALIZACION',
+                    estado: 'alerta',
+                    condicion: `SI estado_actual("${obra.estado_actual}") contiene "paralizada"`,
+                    accion: 'ENTONCES marcar OBRA_PARALIZADA y solicitar plan de reactivación.',
+                    detalle: 'La obra no registra actividad; se requiere seguimiento para evitar deterioro y sobrecostos.'
                 });
             } else {
                 reglasEvaluadas.push({
-                    id: "R2-DESFASAJE-NN2",
-                    estado: "ok",
-                    condicion: `SI (|Presupuesto (${obra.avanceFinanciero}%) - Físico (${obra.avanceFisico}%)| = ${desfasaje.toFixed(1)}% <= 15.0%)`,
-                    accion: `ENTONCES confirmar EQUILIBRIO_FISICO_FINANCIERO.`,
-                    detalle: `La curva de inversión acompaña proporcionalmente el progreso físico de la obra.`
+                    id: 'R2-PARALIZACION',
+                    estado: 'ok',
+                    condicion: `SI estado_actual("${obra.estado_actual || 'SIN DATO'}") NO contiene "paralizada"`,
+                    accion: 'ENTONCES confirmar continuidad de la obra.',
+                    detalle: 'La obra no figura paralizada en el registro.'
                 });
             }
 
-            // REGLA R3: Evaluación de Superficie (> 1000 m² requiere fiscalización reforzada)
+            // R3: Desvío financiero (la hoja usa umbral de 5%)
+            const desvio = salud.includes('alerta') || desfasaje > 5.0;
+            if (desvio) {
+                if (nivelRiesgo === 'NORMAL') nivelRiesgo = 'ALERTA';
+                reglasEvaluadas.push({
+                    id: 'R3-DESVIO-NN2',
+                    estado: 'alerta',
+                    condicion: `SI (|Avance_Financiero (${obra.avanceFinanciero.toFixed(1)}%) - Avance_Físico (${obra.avanceFisico.toFixed(1)}%)| = ${desfasaje.toFixed(1)}% > 5.0%)`,
+                    accion: 'ENTONCES inferir DESVIO_FINANCIERO_LEVE y solicitar conciliación contable.',
+                    detalle: `La hoja clasifica el estado de salud como "${saludLimpia || 'sin dato'}".`
+                });
+            } else {
+                reglasEvaluadas.push({
+                    id: 'R3-DESVIO-NN2',
+                    estado: 'ok',
+                    condicion: `SI (|Avance_Financiero (${obra.avanceFinanciero.toFixed(1)}%) - Avance_Físico (${obra.avanceFisico.toFixed(1)}%)| = ${desfasaje.toFixed(1)}% <= 5.0%)`,
+                    accion: 'ENTONCES confirmar EQUILIBRIO_FISICO_FINANCIERO.',
+                    detalle: 'La curva de inversión acompaña el avance físico dentro del umbral de la hoja (5%).'
+                });
+            }
+
+            // R4: Envergadura (recomendación preventiva, no altera el nivel)
             if (obra.superficie > 1000) {
-                if (nivelRiesgo === "NORMAL") nivelRiesgo = "ALERTA";
                 reglasEvaluadas.push({
-                    id: "R3-ENVERGADURA-M2",
-                    estado: "alerta",
-                    condicion: `SI (superficie_m2 (${obra.superficie.toLocaleString('es-AR')} m²) > 1.000 m²)`,
-                    accion: `ENTONCES asignar PROTOCOLO_GRAN_ENVERGADURA (Inspección de Seguridad e Higiene obligatoria).`,
-                    detalle: `Por superar los 1.000 m², la normativa CABA exige control estructural y plan de impacto.`
+                    id: 'R4-ENVERGADURA-M2',
+                    estado: 'info',
+                    condicion: `SI superficie_m2 (${obra.superficie.toLocaleString('es-AR')} m²) > 1.000 m²`,
+                    accion: 'ENTONCES asignar PROTOCOLO_GRAN_ENVERGADURA (inspección de seguridad e higiene).',
+                    detalle: 'Recomendación preventiva: no modifica el nivel de riesgo, pero exige control reforzado.'
                 });
             } else {
                 reglasEvaluadas.push({
-                    id: "R3-ENVERGADURA-M2",
-                    estado: "ok",
-                    condicion: `SI (superficie_m2 (${obra.superficie.toLocaleString('es-AR')} m²) <= 1.000 m²)`,
-                    accion: `ENTONCES aplicar régimen estándar de verificación por escala.`,
-                    detalle: `Superficie dentro del umbral estándar para obras menores/medias.`
+                    id: 'R4-ENVERGADURA-M2',
+                    estado: 'ok',
+                    condicion: `SI superficie_m2 (${obra.superficie.toLocaleString('es-AR')} m²) <= 1.000 m²`,
+                    accion: 'ENTONCES aplicar régimen estándar de verificación por escala.',
+                    detalle: 'Superficie dentro del umbral estándar para obras menores/medias.'
                 });
             }
 
-            // REGLA R4: Vigencia Administrativa del Permiso de Obra
-            if (obra.permisoVencido) {
-                if (nivelRiesgo === "NORMAL") nivelRiesgo = "ALERTA";
+            // R5: Score NN1 (prioridad de seguimiento, no altera el nivel)
+            if (obra.probabilidad < 50) {
                 reglasEvaluadas.push({
-                    id: "R4-VIGENCIA-PERMISO",
-                    estado: "alerta",
-                    condicion: `SI (permiso_vencido == VERDADERO)`,
-                    accion: `ENTONCES emitir INTIMACION_PRORROGA_DGROC (Plazo 15 días hábiles).`,
-                    detalle: `El plazo administrativo del permiso requiere actualización o presentación de prórroga.`
+                    id: 'R5-SCORE-NN1',
+                    estado: 'info',
+                    condicion: `SI prob_finalizacion (${obra.probabilidad.toFixed(1)}%) < 50.0%`,
+                    accion: 'ENTONCES priorizar el expediente en el tablero de seguimiento.',
+                    detalle: 'Baja probabilidad de finalización estimada por la Red Neuronal 1.'
+                });
+            } else if (obra.probabilidad < 85) {
+                reglasEvaluadas.push({
+                    id: 'R5-SCORE-NN1',
+                    estado: 'ok',
+                    condicion: `SI 50.0% <= prob_finalizacion (${obra.probabilidad.toFixed(1)}%) < 85.0%`,
+                    accion: 'ENTONCES programar seguimiento preventivo trimestral.',
+                    detalle: 'Probabilidad moderada; requiere monitoreo periódico.'
                 });
             } else {
                 reglasEvaluadas.push({
-                    id: "R4-VIGENCIA-PERMISO",
-                    estado: "ok",
-                    condicion: `SI (permiso_vencido == FALSO)`,
-                    accion: `ENTONCES validar vigencia administrativa del legajo.`,
-                    detalle: `Permiso de obra activo y dentro de los plazos reglamentarios.`
+                    id: 'R5-SCORE-NN1',
+                    estado: 'ok',
+                    condicion: `SI prob_finalizacion (${obra.probabilidad.toFixed(1)}%) >= 85.0%`,
+                    accion: 'ENTONCES certificar CONFORMIDAD_PREDICTIVA_OPTIMA.',
+                    detalle: 'Alta probabilidad de finalización exitosa según la Red Neuronal 1.'
                 });
             }
 
-            // REGLA R5: Umbral de Confianza de Red Neuronal 1 / Regresión Logística
-            if (obra.probExitoNN1 < 50.0) {
-                nivelRiesgo = "CRITICO";
-                reglasEvaluadas.push({
-                    id: "R5-SCORE-NN1",
-                    estado: "critico",
-                    condicion: `SI (Prob_Exito_NN1 (${obra.probExitoNN1}%) < 50.0%)`,
-                    accion: `ENTONCES clasificar EXPEDIENTE_ALTO_RIESGO en tablero de prioridades.`,
-                    detalle: `Los patrones aprendidos por la Red Neuronal indican alta probabilidad de conflicto o demora.`
-                });
-            } else if (obra.probExitoNN1 < 85.0) {
-                if (nivelRiesgo === "NORMAL") nivelRiesgo = "ALERTA";
-                reglasEvaluadas.push({
-                    id: "R5-SCORE-NN1",
-                    estado: "alerta",
-                    condicion: `SI (50.0% <= Prob_Exito_NN1 (${obra.probExitoNN1}%) < 85.0%)`,
-                    accion: `ENTONCES programar seguimiento preventivo trimestral.`,
-                    detalle: `Probabilidad moderada-alta; requiere monitoreo por complejidad o antigüedad del trámite.`
-                });
-            } else {
-                reglasEvaluadas.push({
-                    id: "R5-SCORE-NN1",
-                    estado: "ok",
-                    condicion: `SI (Prob_Exito_NN1 (${obra.probExitoNN1}%) >= 85.0%)`,
-                    accion: `ENTONCES certificar CONFORMIDAD_PREDICTIVA_OPTIMA.`,
-                    detalle: `Alta probabilidad de finalización exitosa sin desvíos relevantes.`
-                });
-            }
-
-            // Construcción de Conclusiones y Diagnóstico Ejecutivo (Cajita 3)
-            let diagnostico = {};
-            if (nivelRiesgo === "CRITICO") {
-                const motivos = [];
-                if (obra.clausurada) motivos.push("clausura vigente por contravención");
-                if (obra.paralizada) motivos.push("paralización operativa declarada");
-                if (desfasaje > 15) motivos.push(`desfasaje financiero/físico crítico del ${desfasaje.toFixed(1)}% (supera el umbral del 15%)`);
-                if (obra.probExitoNN1 < 50) motivos.push(`baja probabilidad de conformidad en NN1 (${obra.probExitoNN1}%)`);
-
-                diagnostico = {
-                    nivel: "CRITICO",
-                    badgeText: "ESTADO CRÍTICO",
-                    titulo: "Dictamen Crítico: Intervención Prioritaria Requerida",
-                    explicacion: `El sistema híbrido detectó anomalías severas asociadas a ${motivos.join(", ")}. La combinación entre la inferencia neuronal y las reglas de control DGROC evidencia un riesgo alto que impide la validación automática del expediente.`,
-                    accion: "Disponer inspección presencial urgente de la Agencia Gubernamental de Control (AGC), auditar certificaciones de obra y suspender nuevas aprobaciones hasta regularizar el desfasaje o levantamiento de clausura."
-                };
-            } else if (nivelRiesgo === "ALERTA") {
-                const motivosAlerta = [];
-                if (obra.superficie > 1000) motivosAlerta.push(`superficie de gran envergadura (${obra.superficie.toLocaleString('es-AR')} m² > 1.000 m²)`);
-                if (obra.permisoVencido) motivosAlerta.push("vencimiento del plazo administrativo del permiso");
-                if (obra.probExitoNN1 < 85) motivosAlerta.push(`score preventivo NN1 del ${obra.probExitoNN1}%`);
-
-                diagnostico = {
-                    nivel: "ALERTA",
-                    badgeText: "ALERTA PREVENTIVA",
-                    titulo: "Dictamen de Alerta: Monitoreo y Verificación Especial",
-                    explicacion: `Si bien no existe un desfasaje financiero crítico entre avance físico (${obra.avanceFisico}%) y presupuestario (${obra.avanceFinanciero}%), el motor de reglas activó alertas preventivas por ${motivosAlerta.join(" y ")}.`,
-                    accion: obra.permisoVencido 
-                        ? "Notificar al Director de Obra para presentar renovación/prórroga de permiso ante DGROC dentro de los próximos 15 días hábiles y verificar libro de obra."
-                        : "Asignar auditoría técnica programada de seguridad en obra mayor (>1.000 m²) y validar documentación del último AVO declarado."
-                };
-            } else {
-                diagnostico = {
-                    nivel: "NORMAL",
-                    badgeText: "ESTADO NORMAL",
-                    titulo: "Dictamen Favorable: Obra en Parámetros Normales",
-                    explicacion: `Tanto los modelos de aprendizaje profundo (NN1: ${obra.probExitoNN1}% de éxito) como el motor simbólico Forward Chaining confirman una ejecución saludable. Existe plena coherencia entre el avance físico (${obra.avanceFisico}%) y el presupuesto ejecutado (${obra.avanceFinanciero}%), sin infracciones ni vencimientos.`,
-                    accion: "Mantener el flujo habitual de seguimiento digital mediante n8n y aprobar la continuidad del cronograma de AVO sin necesidad de inspección extraordinaria."
-                };
-            }
+            const diagnostico = construirDiagnosticoSheet(obra, nivelRiesgo, desfasaje, { clausura, paralizada, desvio });
 
             return {
                 nivelRiesgo,
@@ -487,22 +268,13 @@
 
         /**
          * ============================================================================
-         * 3. GESTIÓN DEL MAPA LEAFLET DE CABA CON PUNTOS LED PULSANTES
-         * ============================================================================
-         */
-        let map = null;
-        let markersById = {};
-        let currentObraId = OBRAS_DATASET[0].id;
-
-        /**
-         * ============================================================================
-         * BASEMAP DEL MAPA
-         * CARTO ahora exige una API key válida: sin key (o con una key falsa como
-         * "YOUR_KEY") devuelve tiles vacíos, por eso el mapa se veía en blanco.
+         * 4. BASEMAP DEL MAPA
+         * CARTO ahora exige una API key válida: sin key devuelve tiles vacíos, por
+         * eso el mapa se veía en blanco.
          *
          * - Si pegás una API key real de CARTO acá abajo, se usa CARTO Voyager.
-         * - Si no hay key, se usa Esri World Street Map (gratis, sin key, similar a
-         *   Voyager) y, si fallara, cae automáticamente a OpenStreetMap.
+         * - Si no hay key, se usa Esri World Street Map (gratis, sin key) y, si
+         *   fallara, cae automáticamente a OpenStreetMap.
          * ============================================================================
          */
         const CARTO_API_KEY = ""; // Ej: "eyJhbGciOi..." (dejalo vacío si no tenés key)
@@ -550,10 +322,270 @@
             }
         }
 
+        /**
+         * ============================================================================
+         * 5. CARGA DEL DATASET GCABA EN VIVO
+         * ============================================================================
+         */
+        function setMapDatasetStatus(text, tone = 'info') {
+            const el = document.getElementById('mapDatasetStatus');
+            if (!el) return;
+            const toneClass = tone === 'error'
+                ? 'border-rose-500/40 text-rose-200'
+                : (tone === 'ok' ? 'border-emerald-500/40 text-emerald-200' : 'border-sky-500/30 text-sky-200');
+            const dotClass = tone === 'error'
+                ? 'bg-rose-400'
+                : (tone === 'ok' ? 'bg-emerald-400' : 'bg-sky-400 animate-pulse');
+            el.className = 'absolute top-3 right-3 z-20 pointer-events-none bg-slate-950/85 backdrop-blur-md border px-3 py-1.5 rounded-lg text-[11px] font-mono flex items-center gap-2 ' + toneClass;
+            el.innerHTML = `<span class="w-2 h-2 rounded-full ${dotClass}"></span><span>${escapeHtmlSheet(text)}</span>`;
+        }
+
+        function popupSheetObra(obra) {
+            const badge = {
+                NORMAL: 'text-emerald-300 bg-emerald-500/15 border-emerald-500/30',
+                ALERTA: 'text-amber-300 bg-amber-500/15 border-amber-500/30',
+                CRITICO: 'text-rose-300 bg-rose-500/15 border-rose-500/30'
+            }[obra.severidad];
+
+            return `
+                <div class="p-1 min-w-[240px] max-w-[300px] space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[10px] font-mono text-slate-400">${escapeHtmlSheet(obra.comuna)}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badge}">${obra.severidad}</span>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-white">${escapeHtmlSheet(obra.calle)} ${escapeHtmlSheet(obra.altura)}</div>
+                        <div class="text-[11px] font-mono text-sky-300 mt-0.5">${escapeHtmlSheet(obra.expediente)}</div>
+                    </div>
+                    <div class="text-[11px] text-slate-300">${escapeHtmlSheet(obra.estado_actual || 'Sin estado')}</div>
+                    <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-700/70 text-[11px]">
+                        <div><span class="text-slate-400 block">Superficie:</span><strong class="text-slate-200">${obra.superficie.toLocaleString('es-AR')} m²</strong></div>
+                        <div><span class="text-slate-400 block">Prob. finalizar:</span><strong class="text-slate-200">${obra.probabilidad.toFixed(1)}%</strong></div>
+                        <div><span class="text-slate-400 block">Avance físico:</span><strong class="text-slate-200">${obra.avanceFisico.toFixed(1)}%</strong></div>
+                        <div><span class="text-slate-400 block">Avance financ.:</span><strong class="text-slate-200">${obra.avanceFinanciero.toFixed(1)}%</strong></div>
+                    </div>
+                    <div class="text-[10px] text-slate-400 pt-1 border-t border-slate-700/70">${escapeHtmlSheet(obra.regla)}</div>
+                </div>
+            `;
+        }
+
+        function popupObraSeleccionada(obra, audit) {
+            const badgeColor = audit.nivelRiesgo === 'CRITICO'
+                ? 'text-rose-400 bg-rose-500/15 border-rose-500/30'
+                : (audit.nivelRiesgo === 'ALERTA' ? 'text-amber-400 bg-amber-500/15 border-amber-500/30' : 'text-emerald-400 bg-emerald-500/15 border-emerald-500/30');
+
+            return `
+                <div class="p-1 min-w-[230px] space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[10px] font-mono text-slate-400">${escapeHtmlSheet(obra.comuna)}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeColor}">
+                            ${audit.diagnostico.badgeText}
+                        </span>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-white">${escapeHtmlSheet(obra.calle)} ${escapeHtmlSheet(obra.altura)}</div>
+                        <div class="text-[11px] font-mono text-sky-300 mt-0.5">${escapeHtmlSheet(obra.expediente)}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-700/70 text-[11px]">
+                        <div>
+                            <span class="text-slate-400 block">Superficie:</span>
+                            <strong class="text-slate-200">${obra.superficie.toLocaleString('es-AR')} m²</strong>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block">Prob. finalizar:</span>
+                            <strong class="text-slate-200">${obra.probabilidad.toFixed(1)}%</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function mapThemeColors() {
+            const cs = getComputedStyle(document.documentElement);
+            const read = (name, fallback) => {
+                const v = cs.getPropertyValue(name).trim();
+                return v || fallback;
+            };
+            return {
+                NORMAL: read('--map-normal', '#10b981'),
+                ALERTA: read('--map-alerta', '#f59e0b'),
+                CRITICO: read('--map-critico', '#f43f5e')
+            };
+        }
+
+        function renderizarDatasetSheet(obras) {
+            if (sheetLayer) {
+                map.removeLayer(sheetLayer);
+                sheetLayer = null;
+            }
+
+            const renderer = L.canvas({ padding: 0.4 });
+            const colors = mapThemeColors();
+            const popup = L.popup({ maxWidth: 320 });
+            sheetLayer = L.layerGroup();
+
+            obras.forEach(obra => {
+                const circle = L.circleMarker([obra.lat, obra.lng], {
+                    renderer,
+                    radius: 3,
+                    weight: 0,
+                    fillColor: colors[obra.severidad],
+                    fillOpacity: 0.7
+                });
+                circle._sev = obra.severidad;
+
+                // Clic en el punto: abre el detalle y actualiza cajitas 1, 2 y 3
+                circle.on('click', () => {
+                    popup.setLatLng([obra.lat, obra.lng]).setContent(popupSheetObra(obra)).openOn(map);
+                    seleccionarObra(obra.uid, false, false, false);
+                });
+
+                sheetLayer.addLayer(circle);
+            });
+
+            sheetLayer.addTo(map);
+
+            const total = datasetSheet.length;
+            const enMapa = obras.length;
+            const countEl = document.getElementById('mapDatasetCount');
+            if (countEl) countEl.textContent = `${total.toLocaleString('es-AR')} obras · ${enMapa.toLocaleString('es-AR')} en mapa`;
+
+            setMapDatasetStatus(`${enMapa.toLocaleString('es-AR')} obras geolocalizadas`, 'ok');
+            setTimeout(() => {
+                const el = document.getElementById('mapDatasetStatus');
+                if (el) el.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Repinta la capa de puntos cuando cambia el tema (original / claro / oscuro)
+        window.auditoriaApplyMapTheme = function () {
+            if (!sheetLayer || typeof sheetLayer.eachLayer !== 'function') return;
+            const colors = mapThemeColors();
+            sheetLayer.eachLayer(layer => {
+                if (layer && layer._sev && colors[layer._sev]) {
+                    layer.setStyle({ fillColor: colors[layer._sev] });
+                }
+            });
+        };
+
+        async function cargarDatasetSheet() {
+            setMapDatasetStatus('Cargando dataset GCABA…');
+            const t0 = performance.now();
+
+            try {
+                const res = await fetch(SHEET_CSV_URL, { cache: 'no-cache' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                const csvText = await res.text();
+                const geocodes = window.GEOCODES_CABA || {};
+                const rows = csvSheetToObjects(csvText);
+
+                const tMap = performance.now();
+                datasetSheet = rows.map((r, i) => {
+                    const direccion = (r.direccion_busqueda || '').trim();
+                    const coords = geocodes[direccion];
+                    const num = v => {
+                        const n = parseFloat(v);
+                        return Number.isFinite(n) ? n : 0;
+                    };
+
+                    const rawComuna = (r.comuna_barrio || '').trim();
+                    const comunaMatch = rawComuna.match(/^(.*?)\s*\((.*)\)\s*$/);
+                    const comuna = (comunaMatch ? comunaMatch[1] : rawComuna) || 'Sin comuna';
+                    const barrio = (comunaMatch ? comunaMatch[2] : '') || 'Sin barrio';
+
+                    return {
+                        uid: `SHEET-${i}`,
+                        id: r.expediente || `SHEET-${i}`,
+                        expediente: (r.expediente || '').trim(),
+                        calle: (r.calle || '').trim(),
+                        altura: (r.altura || '').trim(),
+                        direccion,
+                        comuna,
+                        barrio,
+                        superficie: num(r.superficie_m2),
+                        estado_actual: (r.estado_actual || '').trim(),
+                        regla: (r.regla_sistema_experto || '').trim(),
+                        motivo: (r.motivo_diagnostico || '').trim(),
+                        accion: (r.accion_para_destrabar || '').trim(),
+                        probabilidad: num(r.probabilidad_finalizacion_pct),
+                        avanceFisico: num(r.avance_fisico_pct),
+                        avanceFinanciero: num(r.avance_financiero_pct),
+                        desfasaje: num(r.desfasaje_financiero_pct),
+                        salud: (r.estado_salud_rn || '').trim(),
+                        severidad: severidadSheet(r),
+                        lat: coords ? coords[0] : null,
+                        lng: coords ? coords[1] : null
+                    };
+                });
+                datasetAuditMs = performance.now() - tMap;
+
+                const geolocalizadas = datasetSheet.filter(o => o.lat !== null && o.lng !== null);
+                renderizarDatasetSheet(geolocalizadas);
+
+                obrasEjemplo = construirCasosEjemplo();
+                renderBackendAuditSummary();
+                renderQuickTestCases();
+
+                const inicial = obrasEjemplo[0]?.obra || geolocalizadas[0] || datasetSheet[0];
+                if (inicial) seleccionarObra(inicial.uid, false, false);
+
+                console.info(`[AuditorIA] Dataset GCABA: ${datasetSheet.length} obras, ${geolocalizadas.length} geolocalizadas en ${Math.round(performance.now() - t0)} ms (motor: ${Math.round(datasetAuditMs)} ms).`);
+            } catch (err) {
+                console.error('[AuditorIA] No se pudo cargar el dataset GCABA:', err);
+                setMapDatasetStatus('No se pudo cargar el dataset GCABA', 'error');
+                const countEl = document.getElementById('mapDatasetCount');
+                if (countEl) countEl.textContent = 'Dataset GCABA no disponible';
+                const grid = document.getElementById('backendAuditGrid');
+                if (grid) grid.innerHTML = '<div class="col-span-full text-xs text-rose-300">No se pudo cargar el dataset publicado.</div>';
+                const qc = document.getElementById('quickCasesContainer');
+                if (qc) qc.innerHTML = '<span class="text-xs text-rose-300">Dataset no disponible.</span>';
+                const status = document.getElementById('backendAuditStatus');
+                if (status) status.textContent = 'Error al cargar el dataset';
+            }
+        }
+
+        /**
+         * Casos de ejemplo extraídos automáticamente del propio dataset.
+         */
+        function construirCasosEjemplo() {
+            const conCoords = datasetSheet.filter(o => o.lat !== null && o.lng !== null);
+            const casos = [];
+            const usados = new Set();
+
+            const agregar = (obra, tag) => {
+                if (!obra || usados.has(obra.uid)) return;
+                usados.add(obra.uid);
+                casos.push({ obra, tag });
+            };
+
+            const buscar = (pred) => conCoords.find(pred);
+
+            // Mayor superficie del dataset (con coordenadas)
+            const mayor = conCoords.reduce((a, b) => (b.superficie > a.superficie ? b : a), conCoords[0]);
+            agregar(mayor, 'Mayor superficie');
+            // Clausura / contravención
+            agregar(buscar(o => /clausur|contravenci|judicial/i.test(o.estado_actual)), 'Clausura');
+            // Desvío financiero leve
+            agregar(buscar(o => o.severidad === 'ALERTA' && !/paralizad/i.test(o.estado_actual)), 'Desvío');
+            // Obra paralizada
+            agregar(buscar(o => /paralizad/i.test(o.estado_actual)), 'Paralizada');
+            // Gran escala normal (sin repetir la de mayor superficie)
+            agregar(buscar(o => o.severidad === 'NORMAL' && o.superficie > 1000 && !usados.has(o.uid)), 'Gran escala');
+            // Obra menor
+            agregar(buscar(o => o.severidad === 'NORMAL' && o.superficie > 0 && o.superficie < 500), 'Obra menor');
+            // Regla AVO autorizado
+            agregar(buscar(o => o.regla === 'AVO AUTORIZADO' && !usados.has(o.uid)), 'AVO');
+            // Obra finalizada
+            agregar(buscar(o => o.regla === 'OBRA FINALIZADA' && !usados.has(o.uid)), 'Finalizada');
+
+            return casos.slice(0, 8);
+        }
+
         function initCabaMap() {
             // Centro geográfico de CABA
             const cabaCenter = [-34.6037, -58.3816];
-            
+
             map = L.map('cabaMap', {
                 center: cabaCenter,
                 zoom: 12,
@@ -563,126 +595,160 @@
 
             agregarBasemap();
 
-            // Renderizar cada obra con un marcador LED pulsante
-            OBRAS_DATASET.forEach(obra => {
-                const audit = auditarExpediente(obra);
-                const statusClass = audit.nivelRiesgo === 'CRITICO' 
-                    ? 'led-critico' 
-                    : (audit.nivelRiesgo === 'ALERTA' ? 'led-alerta' : 'led-normal');
-
-                const customIcon = L.divIcon({
-                    className: 'custom-led-div-icon',
-                    html: `
-                        <div id="marker-wrapper-${obra.id}" class="led-marker-wrapper ${statusClass} ${obra.id === currentObraId ? 'led-active' : ''}">
-                            <div class="led-ring"></div>
-                            <div class="led-core"></div>
-                        </div>
-                    `,
-                    iconSize: [36, 36],
-                    iconAnchor: [18, 18],
-                    popupAnchor: [0, -16]
-                });
-
-                const marker = L.marker([obra.lat, obra.lng], { icon: customIcon }).addTo(map);
-
-                const badgeColor = audit.nivelRiesgo === 'CRITICO' 
-                    ? 'text-rose-400 bg-rose-500/15 border-rose-500/30' 
-                    : (audit.nivelRiesgo === 'ALERTA' ? 'text-amber-400 bg-amber-500/15 border-amber-500/30' : 'text-emerald-400 bg-emerald-500/15 border-emerald-500/30');
-
-                const popupHtml = `
-                    <div class="p-1 min-w-[220px] space-y-2">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="text-[10px] font-mono text-slate-400">${obra.id} · ${obra.barrio}</span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeColor}">
-                                ${audit.diagnostico.badgeText}
-                            </span>
-                        </div>
-                        <div>
-                            <div class="text-xs font-bold text-white">${obra.calle} ${obra.altura}</div>
-                            <div class="text-[11px] font-mono text-sky-300 mt-0.5">${obra.expediente}</div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-700/70 text-[11px]">
-                            <div>
-                                <span class="text-slate-400 block">Superficie:</span>
-                                <strong class="text-slate-200">${obra.superficie.toLocaleString('es-AR')} m²</strong>
-                            </div>
-                            <div>
-                                <span class="text-slate-400 block">Éxito NN1:</span>
-                                <strong class="text-slate-200">${obra.probExitoNN1}%</strong>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                marker.bindPopup(popupHtml);
-
-                // Al hacer clic en un punto del mapa, auditar esa obra directamente
-                marker.on('click', () => {
-                    seleccionarObra(obra.id, false);
-                });
-
-                markersById[obra.id] = marker;
-            });
+            // La capa de 12k+ puntos y el marcador de selección se crean al cargar
+            // el dataset publicado en Google Sheets.
+            cargarDatasetSheet();
         }
 
-        function focusMapOnObra(obra, shouldFly = true) {
+        function focusMapOnObra(obra, audit, shouldFly = true, abrirPopup = true) {
             if (!map) return;
 
-            // Actualizar clase activa en todos los marcadores LED
-            OBRAS_DATASET.forEach(item => {
-                const el = document.getElementById(`marker-wrapper-${item.id}`);
-                if (el) {
-                    if (item.id === obra.id) {
-                        el.classList.add('led-active');
-                    } else {
-                        el.classList.remove('led-active');
-                    }
+            const hud = document.getElementById('mapCoordsHud');
+
+            if (obra.lat === null || obra.lng === null) {
+                if (selectedMarker) {
+                    map.removeLayer(selectedMarker);
+                    selectedMarker = null;
                 }
+                if (hud) hud.textContent = 'Sin geolocalización para esta dirección';
+                return;
+            }
+
+            const statusClass = audit.nivelRiesgo === 'CRITICO'
+                ? 'led-critico'
+                : (audit.nivelRiesgo === 'ALERTA' ? 'led-alerta' : 'led-normal');
+
+            if (selectedMarker) {
+                map.removeLayer(selectedMarker);
+                selectedMarker = null;
+            }
+
+            const customIcon = L.divIcon({
+                className: 'custom-led-div-icon',
+                html: `
+                    <div id="marker-wrapper-selected" class="led-marker-wrapper ${statusClass} led-active">
+                        <div class="led-ring"></div>
+                        <div class="led-core"></div>
+                    </div>
+                `,
+                iconSize: [36, 36],
+                iconAnchor: [18, 18],
+                popupAnchor: [0, -16]
             });
 
-            const marker = markersById[obra.id];
-            if (marker) {
-                if (shouldFly) {
-                    map.flyTo([obra.lat, obra.lng], 15, {
-                        animate: true,
-                        duration: 1.1
-                    });
-                }
+            selectedMarker = L.marker([obra.lat, obra.lng], {
+                icon: customIcon,
+                zIndexOffset: 1000
+            }).addTo(map);
+
+            selectedMarker.bindPopup(popupObraSeleccionada(obra, audit));
+
+            if (shouldFly) {
+                map.flyTo([obra.lat, obra.lng], 15, {
+                    animate: true,
+                    duration: 1.1
+                });
+            }
+
+            if (abrirPopup) {
                 setTimeout(() => {
-                    marker.openPopup();
+                    if (selectedMarker) selectedMarker.openPopup();
                 }, shouldFly ? 450 : 50);
             }
 
-            // Actualizar HUD de coordenadas
-            const hud = document.getElementById('mapCoordsHud');
             if (hud) {
-                hud.textContent = `WGS84: ${obra.lat.toFixed(4)}, ${obra.lng.toFixed(4)} · ${obra.barrio} (${obra.comuna})`;
+                const barrio = obra.barrio && obra.barrio !== 'Sin barrio' ? ` · ${obra.barrio}` : '';
+                hud.textContent = `WGS84: ${obra.lat.toFixed(4)}, ${obra.lng.toFixed(4)} · ${obra.comuna}${barrio}`;
             }
         }
 
         /**
          * ============================================================================
-         * 4. RENDERIZADO DE UI (CAJITAS 1, 2 Y 3 + BOTONES DE CASOS DE PRUEBA)
+         * 6. RENDERIZADO DE UI (CAJITAS 1, 2 Y 3 + RESUMEN TOTAL DEL BACKEND)
          * ============================================================================
          */
+        function renderBackendAuditSummary() {
+            const total = datasetSheet.length;
+            const geo = datasetSheet.filter(o => o.lat !== null).length;
+            const counts = { NORMAL: 0, ALERTA: 0, CRITICO: 0 };
+            const reglas = {};
+
+            datasetSheet.forEach(o => {
+                if (counts[o.severidad] !== undefined) counts[o.severidad]++;
+                const regla = o.regla || 'SIN REGLA';
+                reglas[regla] = (reglas[regla] || 0) + 1;
+            });
+
+            const fmt = n => n.toLocaleString('es-AR');
+            const pctNum = n => total ? (100 * n) / total : 0;
+            const pct = n => total ? `${pctNum(n).toFixed(1).replace('.', ',')}%` : '0%';
+
+            const setText = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = value;
+            };
+
+            setText('kpiTotal', fmt(total));
+            setText('kpiNormal', fmt(counts.NORMAL));
+            setText('kpiAlerta', fmt(counts.ALERTA));
+            setText('kpiCritico', fmt(counts.CRITICO));
+
+            const grid = document.getElementById('backendAuditGrid');
+            if (grid) {
+                const tiles = [
+                    { label: 'Registros procesados', value: fmt(total), tone: 'text-white' },
+                    { label: 'Geolocalizados', value: `${fmt(geo)} (${pct(geo)})`, tone: 'text-sky-300' },
+                    { label: 'Normal', value: `${fmt(counts.NORMAL)} (${pct(counts.NORMAL)})`, tone: 'text-emerald-300' },
+                    { label: 'Alerta', value: `${fmt(counts.ALERTA)} (${pct(counts.ALERTA)})`, tone: 'text-amber-300' },
+                    { label: 'Crítico', value: `${fmt(counts.CRITICO)} (${pct(counts.CRITICO)})`, tone: 'text-rose-300' },
+                    { label: 'Sin geolocalizar', value: fmt(total - geo), tone: 'text-slate-400' }
+                ];
+                grid.innerHTML = tiles.map(t => `
+                    <div class="rounded-lg bg-slate-900/80 border border-slate-800 px-2.5 py-2">
+                        <span class="text-[10px] text-slate-400 block">${t.label}</span>
+                        <strong class="text-sm font-mono ${t.tone}">${t.value}</strong>
+                    </div>
+                `).join('');
+            }
+
+            const barNormal = document.getElementById('barNormal');
+            const barAlerta = document.getElementById('barAlerta');
+            const barCritico = document.getElementById('barCritico');
+            if (barNormal) barNormal.style.width = `${pctNum(counts.NORMAL).toFixed(2)}%`;
+            if (barAlerta) barAlerta.style.width = `${pctNum(counts.ALERTA).toFixed(2)}%`;
+            if (barCritico) barCritico.style.width = `${pctNum(counts.CRITICO).toFixed(2)}%`;
+
+            const rulesEl = document.getElementById('backendAuditRules');
+            if (rulesEl) {
+                rulesEl.innerHTML = Object.entries(reglas)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([regla, n]) => `
+                        <span class="px-2 py-1 rounded-md bg-slate-900 border border-slate-800 text-slate-300">
+                            ${escapeHtmlSheet(regla)}: <strong class="text-white">${fmt(n)}</strong>
+                        </span>
+                    `).join('');
+            }
+
+            setText('backendAuditStatus', `${fmt(total)} registros auditados en ${Math.round(datasetAuditMs)} ms`);
+        }
+
         function renderQuickTestCases() {
             const container = document.getElementById('quickCasesContainer');
+            if (!container) return;
             container.innerHTML = '';
 
-            // Contar KPIs globales
-            let countNormal = 0, countAlerta = 0, countCritico = 0;
+            if (!obrasEjemplo.length) {
+                container.innerHTML = '<span class="text-xs text-slate-500">Cargando casos de ejemplo…</span>';
+                return;
+            }
 
-            OBRAS_DATASET.forEach(obra => {
-                const audit = auditarExpediente(obra);
-                if (audit.nivelRiesgo === 'NORMAL') countNormal++;
-                else if (audit.nivelRiesgo === 'ALERTA') countAlerta++;
-                else countCritico++;
+            obrasEjemplo.forEach(({ obra, tag }) => {
+                const audit = auditarObraSheet(obra);
+                const isSelected = obra.uid === currentObraId;
 
-                const isSelected = obra.id === currentObraId;
-                
                 let dotColor = 'bg-emerald-400';
                 let activeBorder = 'border-slate-700/80 bg-slate-900/80 text-slate-300 hover:border-slate-500';
-                
+
                 if (audit.nivelRiesgo === 'CRITICO') {
                     dotColor = 'bg-rose-500';
                     if (isSelected) activeBorder = 'border-rose-500 bg-rose-500/15 text-white shadow-md shadow-rose-500/10';
@@ -697,36 +763,34 @@
                 btn.className = `shrink-0 px-3 py-2 rounded-xl border text-xs font-medium flex items-center gap-2 transition ${activeBorder}`;
                 btn.innerHTML = `
                     <span class="w-2 h-2 rounded-full ${dotColor}"></span>
-                    <span class="font-mono font-semibold">${obra.calle.split(' ')[0]} ${obra.altura}</span>
-                    <span class="text-[11px] opacity-75">(${obra.etiquetaCaso.split('·')[0].trim()})</span>
+                    <span class="font-mono font-semibold">${escapeHtmlSheet(obra.calle)} ${escapeHtmlSheet(obra.altura)}</span>
+                    <span class="text-[11px] opacity-75">(${escapeHtmlSheet(tag)})</span>
                 `;
-                btn.onclick = () => seleccionarObra(obra.id, true);
+                btn.onclick = () => seleccionarObra(obra.uid, true);
                 container.appendChild(btn);
             });
-
-            document.getElementById('kpiTotal').textContent = OBRAS_DATASET.length;
-            document.getElementById('kpiNormal').textContent = countNormal;
-            document.getElementById('kpiAlerta').textContent = countAlerta;
-            document.getElementById('kpiCritico').textContent = countCritico;
         }
 
-        function seleccionarObra(obraId, shouldFlyMap = true, animateSteps = false) {
-            const obra = OBRAS_DATASET.find(o => o.id === obraId) || OBRAS_DATASET[0];
-            currentObraId = obra.id;
+        function seleccionarObra(obraUid, shouldFlyMap = true, animateSteps = false, abrirPopupMapa = true) {
+            const obra = datasetSheet.find(o => o.uid === obraUid);
+            if (!obra) return;
 
-            const audit = auditarExpediente(obra);
+            currentObraId = obra.uid;
+            const audit = auditarObraSheet(obra);
 
-            // Re-render botones de casos rápidos para marcar el activo
+            // Re-render botones de casos de ejemplo para marcar el activo
             renderQuickTestCases();
 
             // --- ACTUALIZAR CAJITA 1: FICHA TÉCNICA Y MÉTRICAS IA ---
-            document.getElementById('fichaExpediente').textContent = obra.expediente;
-            document.getElementById('fichaDomicilio').textContent = `${obra.calle} ${obra.altura}`;
-            document.getElementById('fichaBarrioComuna').textContent = `${obra.barrio} · ${obra.comuna}`;
-            document.getElementById('fichaTipoObra').textContent = obra.tipoObra;
-            document.getElementById('fichaSuperficie').textContent = `${obra.superficie.toLocaleString('es-AR', { minimumFractionDigits: 2 })} m²`;
-            document.getElementById('fichaAvo').textContent = obra.ultimoAvo;
-            document.getElementById('fichaEstadoObra').textContent = obra.estadoRegistral;
+            document.getElementById('fichaExpediente').textContent = obra.expediente || 'Sin expediente';
+            document.getElementById('fichaDomicilio').textContent = `${obra.calle} ${obra.altura}`.trim() || obra.direccion;
+            document.getElementById('fichaBarrioComuna').textContent = obra.barrio && obra.barrio !== 'Sin barrio'
+                ? `${obra.barrio} · ${obra.comuna}`
+                : obra.comuna;
+            document.getElementById('fichaTipoObra').textContent = obra.regla || 'Sin regla';
+            document.getElementById('fichaSuperficie').textContent = `${obra.superficie.toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} m²`;
+            document.getElementById('fichaAvo').textContent = obra.estado_actual || 'Sin estado';
+            document.getElementById('fichaEstadoObra').textContent = obra.salud || 'Sin dato';
 
             // Badge de Estado en Cajita 1
             const fichaBadge = document.getElementById('fichaBadgeEstado');
@@ -741,20 +805,20 @@
                 fichaBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>${audit.diagnostico.badgeText}</span>`;
             }
 
-            // Red Neuronal 1: Probabilidad de Éxito
+            // Red Neuronal 1: Probabilidad de Finalización
             const nn1ProbText = document.getElementById('nn1ProbText');
             const nn1ProbBar = document.getElementById('nn1ProbBar');
             const nn1Clasificacion = document.getElementById('nn1Clasificacion');
 
-            nn1ProbText.textContent = `${obra.probExitoNN1.toFixed(1)}%`;
-            nn1ProbBar.style.width = `${obra.probExitoNN1}%`;
+            nn1ProbText.textContent = `${obra.probabilidad.toFixed(1)}%`;
+            nn1ProbBar.style.width = `${Math.max(0, Math.min(100, obra.probabilidad))}%`;
 
-            if (obra.probExitoNN1 < 50) {
+            if (obra.probabilidad < 50) {
                 nn1ProbText.className = "text-2xl font-extrabold font-mono text-rose-400";
                 nn1ProbBar.className = "h-full rounded-full bg-gradient-to-r from-rose-600 to-rose-400 transition-all duration-700";
                 nn1Clasificacion.className = "text-rose-300 font-semibold";
                 nn1Clasificacion.textContent = "Clasificación: Alto Riesgo";
-            } else if (obra.probExitoNN1 < 85) {
+            } else if (obra.probabilidad < 85) {
                 nn1ProbText.className = "text-2xl font-extrabold font-mono text-amber-400";
                 nn1ProbBar.className = "h-full rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 transition-all duration-700";
                 nn1Clasificacion.className = "text-amber-300 font-semibold";
@@ -768,9 +832,9 @@
 
             // Red Neuronal 2: Avance Físico vs Presupuesto
             document.getElementById('avanceFisicoVal').textContent = `${obra.avanceFisico.toFixed(1)}%`;
-            document.getElementById('avanceFisicoBar').style.width = `${obra.avanceFisico}%`;
+            document.getElementById('avanceFisicoBar').style.width = `${Math.max(0, Math.min(100, obra.avanceFisico))}%`;
             document.getElementById('avanceFinancieroVal').textContent = `${obra.avanceFinanciero.toFixed(1)}%`;
-            document.getElementById('avanceFinancieroBar').style.width = `${obra.avanceFinanciero}%`;
+            document.getElementById('avanceFinancieroBar').style.width = `${Math.max(0, Math.min(100, obra.avanceFinanciero))}%`;
 
             const desfBadge = document.getElementById('desfasajeBadge');
             const desfBar = document.getElementById('avanceFinancieroBar');
@@ -778,6 +842,10 @@
                 desfBadge.className = "px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40";
                 desfBadge.textContent = `Δ ${audit.desfasaje.toFixed(1)}% (>15% CRÍTICO)`;
                 desfBar.className = "h-full bg-rose-500 bg-stripes rounded-full transition-all duration-700";
+            } else if (audit.desfasaje > 5) {
+                desfBadge.className = "px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/35";
+                desfBadge.textContent = `Δ ${audit.desfasaje.toFixed(1)}% (DESVÍO LEVE)`;
+                desfBar.className = "h-full bg-amber-400 rounded-full transition-all duration-700";
             } else {
                 desfBadge.className = "px-2.5 py-0.5 rounded-md text-xs font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
                 desfBadge.textContent = `Δ ${audit.desfasaje.toFixed(1)}% (OK)`;
@@ -788,7 +856,7 @@
             const hechosContainer = document.getElementById('hechosInicialesContainer');
             hechosContainer.innerHTML = audit.hechos.map(h => `
                 <span class="px-2.5 py-1 rounded-lg bg-slate-950/90 border border-slate-800 font-mono text-[11px] text-sky-300">
-                    ${h}
+                    ${escapeHtmlSheet(h)}
                 </span>
             `).join('');
 
@@ -814,6 +882,12 @@
                     iconColor = "text-rose-400";
                     badgeText = "DESVÍO CRÍTICO";
                     badgeStyle = "bg-rose-500/20 text-rose-300 border-rose-500/40";
+                } else if (regla.estado === "info") {
+                    cardStyle = "border-sky-500/30 bg-sky-950/20";
+                    iconName = "info";
+                    iconColor = "text-sky-400";
+                    badgeText = "PREVENTIVO";
+                    badgeStyle = "bg-sky-500/15 text-sky-300 border-sky-500/30";
                 }
 
                 const stepDiv = document.createElement('div');
@@ -829,11 +903,11 @@
                                 </span>
                             </div>
                             <div class="font-mono text-[11px] sm:text-xs text-slate-300 break-words">
-                                <span class="text-sky-400 font-semibold">${regla.condicion}</span>
+                                <span class="text-sky-400 font-semibold">${escapeHtmlSheet(regla.condicion)}</span>
                                 <span class="text-slate-400"> &rarr; </span>
-                                <span class="text-slate-100">${regla.accion}</span>
+                                <span class="text-slate-100">${escapeHtmlSheet(regla.accion)}</span>
                             </div>
-                            <p class="text-xs text-slate-400">${regla.detalle}</p>
+                            <p class="text-xs text-slate-400">${escapeHtmlSheet(regla.detalle)}</p>
                         </div>
                     </div>
                 `;
@@ -876,12 +950,12 @@
             lucide.createIcons();
 
             // --- ENFOCAR MAPA CABA ---
-            focusMapOnObra(obra, shouldFlyMap);
+            focusMapOnObra(obra, audit, shouldFlyMap, abrirPopupMapa);
         }
 
         /**
          * ============================================================================
-         * 5. BUSCADOR INTELIGENTE POR EXPEDIENTE Y DIRECCIÓN
+         * 7. BUSCADOR INTELIGENTE POR EXPEDIENTE Y DIRECCIÓN (DATASET COMPLETO)
          * ============================================================================
          */
         function initSearchSystem() {
@@ -895,8 +969,10 @@
             const matchCount = document.getElementById('searchMatchCount');
             const closeResults = document.getElementById('closeSearchResults');
 
+            const MAX_RESULTS = 30;
+
             function normalizeStr(str) {
-                return str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                return String(str ?? '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
             }
 
             function performLiveSearch(autoSelectFirst = false) {
@@ -911,56 +987,62 @@
                     return;
                 }
 
-                const matches = OBRAS_DATASET.filter(obra => {
+                resultsBar.classList.remove('hidden');
+
+                if (!datasetSheet.length) {
+                    matchCount.textContent = 'Cargando dataset publicado…';
+                    resultsList.innerHTML = '';
+                    return;
+                }
+
+                const matches = datasetSheet.filter(obra => {
                     const expNorm = normalizeStr(obra.expediente);
-                    const dirNorm = normalizeStr(`${obra.calle} ${obra.altura} ${obra.barrio}`);
-                    
+                    const dirNorm = normalizeStr(`${obra.calle} ${obra.altura} ${obra.direccion} ${obra.barrio} ${obra.comuna}`);
+
                     const matchE = qExp ? expNorm.includes(qExp) : true;
                     const matchD = qDir ? dirNorm.includes(qDir) : true;
                     return matchE && matchD;
                 });
 
-                resultsBar.classList.remove('hidden');
-
                 if (matches.length === 0) {
-                    matchCount.innerHTML = `<span class="text-rose-400 font-semibold">No se encontraron expedientes con esos criterios. Probá con "46877598", "FITZ ROY" o "PERU".</span>`;
+                    matchCount.innerHTML = `<span class="text-rose-400 font-semibold">No se encontraron obras con esos criterios. Probá con "32845307", "PERU 1560" o "FITZ ROY".</span>`;
                     resultsList.innerHTML = '';
                     return;
                 }
 
-                matchCount.textContent = `Coincidencias encontradas (${matches.length}):`;
-                resultsList.innerHTML = matches.map(m => {
-                    const audit = auditarExpediente(m);
-                    const badgeCls = audit.nivelRiesgo === 'CRITICO' 
-                        ? 'text-rose-400 bg-rose-500/15' 
-                        : (audit.nivelRiesgo === 'ALERTA' ? 'text-amber-400 bg-amber-500/15' : 'text-emerald-400 bg-emerald-500/15');
-                    
+                matchCount.textContent = `Coincidencias encontradas (${matches.length.toLocaleString('es-AR')})${matches.length > MAX_RESULTS ? ` · mostrando ${MAX_RESULTS}` : ''}:`;
+
+                resultsList.innerHTML = matches.slice(0, MAX_RESULTS).map(m => {
+                    const badgeCls = m.severidad === 'CRITICO'
+                        ? 'text-rose-400 bg-rose-500/15'
+                        : (m.severidad === 'ALERTA' ? 'text-amber-400 bg-amber-500/15' : 'text-emerald-400 bg-emerald-500/15');
+
                     return `
-                        <button 
+                        <button
                             type="button"
-                            data-id="${m.id}"
+                            data-uid="${m.uid}"
                             class="search-item-btn text-left p-2.5 rounded-xl bg-slate-950/90 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 transition flex flex-col justify-between gap-1"
                         >
                             <div class="flex items-center justify-between gap-2 w-full">
-                                <span class="text-xs font-bold text-white truncate">${m.calle} ${m.altura}</span>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeCls}">${audit.nivelRiesgo}</span>
+                                <span class="text-xs font-bold text-white truncate">${escapeHtmlSheet(m.calle)} ${escapeHtmlSheet(m.altura)}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeCls}">${m.severidad}</span>
                             </div>
-                            <span class="text-[11px] font-mono text-sky-300 truncate">${m.expediente}</span>
-                            <span class="text-[10px] text-slate-400">${m.barrio} · ${m.superficie.toLocaleString('es-AR')} m²</span>
+                            <span class="text-[11px] font-mono text-sky-300 truncate">${escapeHtmlSheet(m.expediente)}</span>
+                            <span class="text-[10px] text-slate-400">${escapeHtmlSheet(m.comuna)} · ${m.superficie.toLocaleString('es-AR')} m²</span>
                         </button>
                     `;
                 }).join('');
 
                 document.querySelectorAll('.search-item-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
-                        const id = btn.getAttribute('data-id');
-                        seleccionarObra(id, true, true);
+                        const uid = btn.getAttribute('data-uid');
+                        seleccionarObra(uid, true, true);
                         resultsBar.classList.add('hidden');
                     });
                 });
 
                 if (autoSelectFirst && matches.length > 0) {
-                    seleccionarObra(matches[0].id, true, true);
+                    seleccionarObra(matches[0].uid, true, true);
                     resultsBar.classList.add('hidden');
                 }
             }
@@ -992,7 +1074,7 @@
 
         /**
          * ============================================================================
-         * 6. CAJITA 5: AGRADECIMIENTOS DEL GRUPO 1 (MODO EDICIÓN PROTEGIDO PARA DEREK)
+         * 8. CAJITA 5: AGRADECIMIENTOS DEL GRUPO 1 (MODO EDICIÓN PROTEGIDO PARA DEREK)
          * ============================================================================
          */
         const DEFAULT_AGRADECIMIENTOS = `Como integrantes del Grupo 1 (Gabriel Leon, Guillermo Hernandez, Lucía Herrera, Derek Reyes y Ezequiel Berterame), queremos expresar nuestro más sincero agradecimiento al docente de la materia "Desarrollo de Sistemas de IA" del IFTS N° 33 por su guía constante, exigencia académica y acompañamiento durante todo el cuatrimestre.
@@ -1127,7 +1209,7 @@ Nos llevamos no solo herramientas técnicas de vanguardia, sino una metodología
 
         /**
          * ============================================================================
-         * 7. INICIALIZACIÓN GLOBAL DE LA APLICACIÓN
+         * 9. INICIALIZACIÓN GLOBAL DE LA APLICACIÓN
          * ============================================================================
          */
         window.addEventListener('DOMContentLoaded', () => {
@@ -1136,12 +1218,9 @@ Nos llevamos no solo herramientas técnicas de vanguardia, sino una metodología
             initSearchSystem();
             initAgradecimientosSection();
 
-            // Cargar la primera obra del dataset por defecto
-            seleccionarObra(OBRAS_DATASET[0].id, false, false);
-
             // Botón para re-simular paso a paso el motor Forward Chaining
             document.getElementById('btnReEjecutarInferencia').addEventListener('click', () => {
-                seleccionarObra(currentObraId, false, true);
+                if (currentObraId) seleccionarObra(currentObraId, false, true);
             });
 
             // Botón para centrar nuevamente todo el mapa de CABA

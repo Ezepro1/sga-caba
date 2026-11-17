@@ -308,6 +308,39 @@
         }
 
         /* ============================================================================
+           CAJITA 5 · barra desplegable (acordeón)
+           La barra queda siempre visible; el contenido se desliza con
+           grid-template-rows 0fr -> 1fr para animar sin alturas fijas.
+           ============================================================================ */
+        .cajita5-collapse {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.45s ease;
+        }
+
+        .cajita5-collapse[data-open="true"] {
+            grid-template-rows: 1fr;
+        }
+
+        .cajita5-inner {
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        #btnToggleCajita5 {
+            transition: background-color 0.25s ease;
+        }
+
+        #btnToggleCajita5:hover {
+            background-color: rgba(148, 163, 184, 0.06);
+        }
+
+        #btnToggleCajita5:focus-visible {
+            outline: 2px solid var(--switch-active-border);
+            outline-offset: -2px;
+        }
+
+        /* ============================================================================
            SELECTOR DE TEMA (header superior derecho)
            ============================================================================ */
         .theme-switcher {

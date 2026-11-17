@@ -95,7 +95,7 @@
                     nivel: 'CRITICO',
                     badgeText: 'ESTADO CRÍTICO',
                     titulo: 'Dictamen Crítico: Intervención Prioritaria Requerida',
-                    explicacion: motivoBackend || `El motor detectó una irregularidad registral crítica (${obra.estado_actual}).`,
+                    explicacion: motivoBackend || `El sistema detectó una irregularidad registral crítica (${obra.estado_actual}).`,
                     accion: accionBackend || 'Disponer inspección presencial urgente de la AGC y suspender nuevas aprobaciones hasta regularizar la situación.'
                 };
             }
@@ -103,7 +103,7 @@
             if (nivelRiesgo === 'ALERTA') {
                 const explicacion = flags.paralizada
                     ? (motivoBackend || `La obra figura como "${obra.estado_actual}".`)
-                    : `La Red Neuronal detectó un desvío financiero de ${desfasaje.toFixed(1)}% (${saludLimpia || 'alerta'}). ${motivoBackend}`.trim();
+                    : `Se detectó un desvío financiero de ${desfasaje.toFixed(1)}% (${saludLimpia || 'alerta'}). ${motivoBackend}`.trim();
 
                 return {
                     nivel: 'ALERTA',
@@ -118,7 +118,7 @@
                 nivel: 'NORMAL',
                 badgeText: 'ESTADO NORMAL',
                 titulo: 'Dictamen Favorable: Obra en Parámetros Normales',
-                explicacion: motivoBackend || 'El motor no detectó clausuras, paralizaciones ni desvíos financieros relevantes.',
+                explicacion: motivoBackend || 'El sistema no detectó clausuras, paralizaciones ni desvíos financieros relevantes.',
                 accion: accionBackend || 'Mantener el flujo habitual de seguimiento digital y aprobar la continuidad del cronograma de AVO.'
             };
         }
@@ -134,12 +134,12 @@
             const hechos = [
                 `estado_actual("${obra.estado_actual || 'SIN DATO'}")`,
                 `superficie_m2(${obra.superficie.toLocaleString('es-AR')})`,
-                `prob_finalizacion_nn1(${obra.probabilidad.toFixed(1)}%)`,
+                `prob_finalizacion(${obra.probabilidad.toFixed(1)}%)`,
                 `avance_fisico(${obra.avanceFisico.toFixed(1)}%)`,
                 `avance_financiero(${obra.avanceFinanciero.toFixed(1)}%)`,
                 `delta_financiero_fisico(${desfasajeConSigno > 0 ? '+' : ''}${desfasajeConSigno}%)`,
-                `estado_salud_rn("${saludLimpia}")`,
-                `regla_experta("${obra.regla || 'SIN REGLA'}")`
+                `estado_salud("${saludLimpia}")`,
+                `regla_aplicada("${obra.regla || 'SIN REGLA'}")`
             ];
 
             const reglasEvaluadas = [];
@@ -192,7 +192,7 @@
             if (desvio) {
                 if (nivelRiesgo === 'NORMAL') nivelRiesgo = 'ALERTA';
                 reglasEvaluadas.push({
-                    id: 'R3-DESVIO-NN2',
+                    id: 'R3-DESVIO-FINANCIERO',
                     estado: 'alerta',
                     condicion: `SI (|Avance_Financiero (${obra.avanceFinanciero.toFixed(1)}%) - Avance_Físico (${obra.avanceFisico.toFixed(1)}%)| = ${desfasaje.toFixed(1)}% > 5.0%)`,
                     accion: 'ENTONCES inferir DESVIO_FINANCIERO_LEVE y solicitar conciliación contable.',
@@ -200,7 +200,7 @@
                 });
             } else {
                 reglasEvaluadas.push({
-                    id: 'R3-DESVIO-NN2',
+                    id: 'R3-DESVIO-FINANCIERO',
                     estado: 'ok',
                     condicion: `SI (|Avance_Financiero (${obra.avanceFinanciero.toFixed(1)}%) - Avance_Físico (${obra.avanceFisico.toFixed(1)}%)| = ${desfasaje.toFixed(1)}% <= 5.0%)`,
                     accion: 'ENTONCES confirmar EQUILIBRIO_FISICO_FINANCIERO.',
@@ -227,18 +227,18 @@
                 });
             }
 
-            // R5: Score NN1 (prioridad de seguimiento, no altera el nivel)
+            // R5: Score de finalización (prioridad de seguimiento, no altera el nivel)
             if (obra.probabilidad < 50) {
                 reglasEvaluadas.push({
-                    id: 'R5-SCORE-NN1',
+                    id: 'R5-SCORE-FINALIZACION',
                     estado: 'info',
                     condicion: `SI prob_finalizacion (${obra.probabilidad.toFixed(1)}%) < 50.0%`,
                     accion: 'ENTONCES priorizar el expediente en el tablero de seguimiento.',
-                    detalle: 'Baja probabilidad de finalización estimada por la Red Neuronal 1.'
+                    detalle: 'Baja probabilidad de finalización estimada por el modelo predictivo.'
                 });
             } else if (obra.probabilidad < 85) {
                 reglasEvaluadas.push({
-                    id: 'R5-SCORE-NN1',
+                    id: 'R5-SCORE-FINALIZACION',
                     estado: 'ok',
                     condicion: `SI 50.0% <= prob_finalizacion (${obra.probabilidad.toFixed(1)}%) < 85.0%`,
                     accion: 'ENTONCES programar seguimiento preventivo trimestral.',
@@ -246,11 +246,11 @@
                 });
             } else {
                 reglasEvaluadas.push({
-                    id: 'R5-SCORE-NN1',
+                    id: 'R5-SCORE-FINALIZACION',
                     estado: 'ok',
                     condicion: `SI prob_finalizacion (${obra.probabilidad.toFixed(1)}%) >= 85.0%`,
-                    accion: 'ENTONCES certificar CONFORMIDAD_PREDICTIVA_OPTIMA.',
-                    detalle: 'Alta probabilidad de finalización exitosa según la Red Neuronal 1.'
+                    accion: 'ENTONCES certificar CONFORMIDAD_ÓPTIMA.',
+                    detalle: 'Alta probabilidad de finalización exitosa según el modelo predictivo.'
                 });
             }
 
@@ -469,7 +469,7 @@
         };
 
         async function cargarDatasetSheet() {
-            setMapDatasetStatus('Cargando dataset GCABA…');
+            setMapDatasetStatus('Cargando obras GCABA…');
             const t0 = performance.now();
 
             try {
@@ -533,15 +533,15 @@
                 console.info(`[AuditorIA] Dataset GCABA: ${datasetSheet.length} obras, ${geolocalizadas.length} geolocalizadas en ${Math.round(performance.now() - t0)} ms (motor: ${Math.round(datasetAuditMs)} ms).`);
             } catch (err) {
                 console.error('[AuditorIA] No se pudo cargar el dataset GCABA:', err);
-                setMapDatasetStatus('No se pudo cargar el dataset GCABA', 'error');
+                setMapDatasetStatus('No se pudieron cargar las obras', 'error');
                 const countEl = document.getElementById('mapDatasetCount');
-                if (countEl) countEl.textContent = 'Dataset GCABA no disponible';
+                if (countEl) countEl.textContent = 'Obras GCABA no disponibles';
                 const grid = document.getElementById('backendAuditGrid');
-                if (grid) grid.innerHTML = '<div class="col-span-full text-xs text-rose-300">No se pudo cargar el dataset publicado.</div>';
+                if (grid) grid.innerHTML = '<div class="col-span-full text-xs text-rose-300">No se pudieron cargar las obras publicadas.</div>';
                 const qc = document.getElementById('quickCasesContainer');
-                if (qc) qc.innerHTML = '<span class="text-xs text-rose-300">Dataset no disponible.</span>';
+                if (qc) qc.innerHTML = '<span class="text-xs text-rose-300">Obras no disponibles.</span>';
                 const status = document.getElementById('backendAuditStatus');
-                if (status) status.textContent = 'Error al cargar el dataset';
+                if (status) status.textContent = 'Error al cargar las obras';
             }
         }
 
@@ -990,7 +990,7 @@
                 resultsBar.classList.remove('hidden');
 
                 if (!datasetSheet.length) {
-                    matchCount.textContent = 'Cargando dataset publicado…';
+                    matchCount.textContent = 'Cargando obras publicadas…';
                     resultsList.innerHTML = '';
                     return;
                 }
@@ -1209,6 +1209,34 @@ Nos llevamos no solo herramientas técnicas de vanguardia, sino una metodología
 
         /**
          * ============================================================================
+         * 8.1 CAJITA 5 · BARRA DESPLEGABLE
+         * La barra queda siempre visible; el contenido se abre/cierra con
+         * data-open en #cajita5Content (animado desde css/styles.css).
+         * ============================================================================
+         */
+        function initCajita5Toggle() {
+            const btn = document.getElementById('btnToggleCajita5');
+            const content = document.getElementById('cajita5Content');
+            const chevron = document.getElementById('cajita5Chevron');
+            const label = document.getElementById('cajita5ToggleLabel');
+            if (!btn || !content) return;
+
+            function setOpen(open) {
+                content.setAttribute('data-open', open ? 'true' : 'false');
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                if (chevron) chevron.classList.toggle('rotate-180', open);
+                if (label) label.textContent = open ? 'Ocultar contenido' : 'Ver contenido';
+            }
+
+            btn.addEventListener('click', () => {
+                setOpen(content.getAttribute('data-open') !== 'true');
+            });
+
+            setOpen(content.getAttribute('data-open') === 'true');
+        }
+
+        /**
+         * ============================================================================
          * 9. INICIALIZACIÓN GLOBAL DE LA APLICACIÓN
          * ============================================================================
          */
@@ -1217,6 +1245,7 @@ Nos llevamos no solo herramientas técnicas de vanguardia, sino una metodología
             initCabaMap();
             initSearchSystem();
             initAgradecimientosSection();
+            initCajita5Toggle();
 
             // Botón para re-simular paso a paso el motor Forward Chaining
             document.getElementById('btnReEjecutarInferencia').addEventListener('click', () => {
